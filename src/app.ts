@@ -5,6 +5,7 @@ import cors from 'cors';
 import config from '@/config';
 import mongoose from 'mongoose';
 import apiRouter from '@/modules';
+import { errorHandler, notFoundHandler } from '@/middlewares';
 const { FRONT_BASE_URL, MONGO_DB_URI } = config;
 
 const App = express();
@@ -31,5 +32,11 @@ mongoose
 
 // Routes 연결
 App.use('/api', apiRouter);
+
+// 404 에러 처리 미들웨어
+App.use(notFoundHandler);
+
+// 에러 처리 미들웨어
+App.use(errorHandler);
 
 export default App;
