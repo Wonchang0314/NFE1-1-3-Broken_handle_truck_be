@@ -81,3 +81,31 @@ export const localLogin = async (
 		next(e);
 	}
 };
+
+// 로그아웃
+export const logout = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		// 1. 토큰 쿠키 만료 설정
+		res.cookie('refreshToken', '', {
+			httpOnly: true,
+			sameSite: 'lax',
+			expires: new Date(0),
+		});
+		res.cookie('accessToken', '', {
+			httpOnly: true,
+			sameSite: 'lax',
+			expires: new Date(0),
+		});
+
+		res.status(200).json({
+			msg: '로그아웃 되었습니다.',
+		});
+	} catch (e) {
+		const customError = new AppError('로그아웃에 실패 했습니다.', 500);
+		next(customError);
+	}
+};
