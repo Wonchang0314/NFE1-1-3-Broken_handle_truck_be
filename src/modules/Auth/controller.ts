@@ -1,4 +1,4 @@
-import { AppError } from '@/utils';
+import { AppError, clearCookie, sendCookie } from '@/utils';
 import { NextFunction, Request, Response } from 'express';
 import { localLoginUser, localRegisterUser } from './service';
 
@@ -22,16 +22,8 @@ export const localRegister = async (
 		);
 
 		// 3. 토큰 쿠기 전송
-		res.cookie('refreshToken', refreshToken, {
-			httpOnly: true,
-			maxAge: 24 * 60 * 60 * 1000,
-			sameSite: 'lax',
-		});
-		res.cookie('accessToken', accessToken, {
-			httpOnly: true,
-			maxAge: 60 * 60 * 1000,
-			sameSite: 'lax',
-		});
+		sendCookie(res, 'refreshToken', refreshToken, 24);
+		sendCookie(res, 'accessToken', accessToken, 1);
 
 		// 4. 응답 전송
 		res.status(200).json({
@@ -63,16 +55,8 @@ export const localLogin = async (
 		);
 
 		// 3. 토큰 쿠기 전송
-		res.cookie('refreshToken', refreshToken, {
-			httpOnly: true,
-			maxAge: 24 * 60 * 60 * 1000,
-			sameSite: 'lax',
-		});
-		res.cookie('accessToken', accessToken, {
-			httpOnly: true,
-			maxAge: 60 * 60 * 1000,
-			sameSite: 'lax',
-		});
+		sendCookie(res, 'refreshToken', refreshToken, 24);
+		sendCookie(res, 'accessToken', accessToken, 1);
 
 		// 4. 응답 전송
 		res.status(200).json({
@@ -92,16 +76,8 @@ export const logout = async (
 ) => {
 	try {
 		// 1. 토큰 쿠키 만료 설정
-		res.cookie('refreshToken', '', {
-			httpOnly: true,
-			sameSite: 'lax',
-			expires: new Date(0),
-		});
-		res.cookie('accessToken', '', {
-			httpOnly: true,
-			sameSite: 'lax',
-			expires: new Date(0),
-		});
+		clearCookie(res, 'refreshToken');
+		clearCookie(res, 'accessToken');
 
 		res.status(200).json({
 			msg: '로그아웃 되었습니다.',
