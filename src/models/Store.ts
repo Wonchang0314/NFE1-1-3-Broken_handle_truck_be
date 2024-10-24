@@ -1,6 +1,6 @@
 import mongoose, { Schema, Types } from 'mongoose';
 
-interface IStore extends Document {
+export interface IStore {
 	ownerId: Types.ObjectId;
 	coordinates: number[];
 	isOpen: boolean;
@@ -22,5 +22,5 @@ const storeSchema = new Schema({
 
 storeSchema.index({ coordinates: '2dsphere' });
 
-const Store = mongoose.model<IStore>('Store', storeSchema);
+const Store = mongoose.model<IStore & mongoose.Document>('Store', storeSchema);
 export default Store;

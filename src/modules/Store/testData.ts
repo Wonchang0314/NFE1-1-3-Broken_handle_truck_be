@@ -1,3 +1,4 @@
+import moment from 'moment';
 import mongoose from 'mongoose';
 
 // 경도, 위도 순서로 되어있어야함
@@ -8,8 +9,8 @@ const dummyStores = [
 		isOpen: true,
 		category: '잉어빵',
 		paymentMethod: ['카드', '현금'],
-		createdAt: new Date().toISOString(),
-		updatedAt: new Date().toISOString(),
+		createdAt: moment().format('YYYY-MM-DD HH:mm'),
+		updatedAt: moment().format('YYYY-MM-DD HH:mm'),
 	},
 	{
 		ownerId: new mongoose.Types.ObjectId(),
@@ -17,8 +18,8 @@ const dummyStores = [
 		isOpen: false,
 		category: '계란빵',
 		paymentMethod: ['카드'],
-		createdAt: new Date().toISOString(),
-		updatedAt: new Date().toISOString(),
+		createdAt: moment().format('YYYY-MM-DD HH:mm'),
+		updatedAt: moment().format('YYYY-MM-DD HH:mm'),
 	},
 	{
 		ownerId: new mongoose.Types.ObjectId(),
@@ -26,8 +27,8 @@ const dummyStores = [
 		isOpen: true,
 		category: '호떡',
 		paymentMethod: ['현금', '카드', '계좌이체'],
-		createdAt: new Date().toISOString(),
-		updatedAt: new Date().toISOString(),
+		createdAt: moment().format('YYYY-MM-DD HH:mm'),
+		updatedAt: moment().format('YYYY-MM-DD HH:mm'),
 	},
 ];
 
