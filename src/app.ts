@@ -5,7 +5,12 @@ import cors from 'cors';
 import config from '@/config';
 import mongoose from 'mongoose';
 import apiRouter from '@/modules';
+import storeRouter from '@/modules/Store';
 import { errorHandler, notFoundHandler } from '@/middlewares';
+/*
+import Store from '@/models/Store';
+import dummyStores from '@/modules/Store/testData';
+*/
 const { FRONT_BASE_URL, MONGO_DB_URI } = config;
 
 const App = express();
@@ -23,15 +28,30 @@ App.use(
 );
 
 App.use(express.json());
+/*
+const insertDummyData = async () => {
+	try {
+		// 기존 데이터가 있을 경우 삭제
+		await Store.deleteMany({});
+		await Store.insertMany(dummyStores);
 
+		console.log('더미 데이터 삽입 완료!');
+	} catch (error) {
+		console.error('더미 데이터를 삽입하는 중 오류 발생:', error);
+	}
+};
+*/
 // DB 연결
 mongoose
 	.connect(MONGO_DB_URI || 'mongodb://localhost:27017/Broken_handle')
-	.then(() => console.log('DB connected✅'))
+	.then(() => {
+		console.log('DB connected✅');
+	})
 	.catch((e) => console.error(e));
 
 // Routes 연결
 App.use('/api', apiRouter);
+App.use('/api', storeRouter);
 
 // 404 에러 처리 미들웨어
 App.use(notFoundHandler);

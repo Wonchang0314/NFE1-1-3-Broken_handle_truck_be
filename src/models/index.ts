@@ -1,1 +1,1 @@
-export { default as User } from './User';
+export { default as User, default as Store } from './User';
