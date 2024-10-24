@@ -7,4 +7,5 @@ export default {
 	JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
 	RUNNING_PORT: process.env.RUNNING_PORT,
 	FRONT_BASE_URL: process.env.FRONT_BASE_URL,
+	NODE_ENV: process.env.NODE_ENV,
 };
