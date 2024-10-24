@@ -1,3 +1,5 @@
+import { AppError } from '@/utils';
+import bcrypt from 'bcrypt';
 import moment from 'moment';
 import { Document, model, Schema } from 'mongoose';
 
@@ -39,6 +41,21 @@ const userSchema = new Schema({
 		unique: true,
 		sparse: true,
 	},
+});
+
+userSchema.pre('save', async function (next) {
+	const user = this as IUser;
+
+	if (!user.isModified('password')) return next();
+
+	try {
+		const salt = await bcrypt.genSalt(10);
+		user.password = await bcrypt.hash(user.password, salt);
+		next();
+	} catch (e) {
+		const customErr = new AppError('비밀번호 해싱 중 오류가 발생했습니다', 500);
+		next(customErr);
+	}
 });
 
 const User = model<IUser>('User', userSchema);
