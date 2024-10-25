@@ -8,7 +8,7 @@ import { authHandler } from '@/middlewares';
 
 const storeRouter = Router();
 
-storeRouter.route('/').get(getStoresController);
+storeRouter.route('/all').get(getStoresController);
 storeRouter
 	.route('/')
 	.all(authHandler)
