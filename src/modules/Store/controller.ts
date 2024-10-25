@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import moment from 'moment';
-import { getStores, postStore } from './service';
+import { getStore, getStores, postStore } from './service';
 import { Types } from 'mongoose';
 import { IStore } from '@/models/Store';
 import { AppError } from '@/utils';
@@ -55,6 +55,30 @@ export const postStoreController = async (
 		};
 
 		const store = await postStore(newStore);
+		res.status(200).json({
+			msg: 'ok',
+			store,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const getStoreController = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const user = req.user;
+
+		if (!user)
+			throw new AppError(
+				'사용자 인증 정보가 없습니다. 잘못된 접근입니다.',
+				401,
+			);
+
+		const store = await getStore(user.id);
 		res.status(200).json({
 			msg: 'ok',
 			store,

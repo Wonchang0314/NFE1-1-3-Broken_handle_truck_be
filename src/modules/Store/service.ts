@@ -49,3 +49,9 @@ export const postStore = async (newStore: IStore) => {
 
 	return updatedStore;
 };
+
+export const getStore = async (ownerId: string) => {
+	const store = await Store.findOne({ ownerId });
+
+	return store;
+};
