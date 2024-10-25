@@ -27,8 +27,8 @@ export const localRegister = async (
 
 		// 4. 응답 전송
 		res.status(200).json({
-			userId: user,
-			msg: '회원가입이 완료되었습니다.',
+			msg: 'ok',
+			_id: user,
 		});
 	} catch (e) {
 		next(e);
@@ -60,8 +60,8 @@ export const localLogin = async (
 
 		// 4. 응답 전송
 		res.status(200).json({
-			userId: user,
-			msg: '로그인이 완료되었습니다.',
+			msg: 'ok',
+			_id: user,
 		});
 	} catch (e) {
 		next(e);
@@ -80,7 +80,7 @@ export const logout = async (
 		clearCookie(res, 'accessToken');
 
 		res.status(200).json({
-			msg: '로그아웃 되었습니다.',
+			msg: 'ok',
 		});
 	} catch (e) {
 		const customError = new AppError('로그아웃에 실패 했습니다.', 500);
