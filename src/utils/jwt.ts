@@ -33,7 +33,12 @@ export const verifyAccessToken = (token: string) => {
 	try {
 		return jwt.verify(token, JWT_ACCESS_SECRET as string);
 	} catch (e) {
-		throw new AppError('유효하지 않은 Refresh Token입니다.', 403);
+		if (e instanceof jwt.TokenExpiredError)
+			throw new AppError('만료된 accessToken 입니다.', 403);
+		else if (e instanceof jwt.JsonWebTokenError)
+			throw new AppError('유효하지 않은 accessToken 입니다.', 401);
+		else
+			throw new AppError('토큰 검증 중 알 수 없는 오류가 발생했습니다.', 500);
 	}
 };
 
@@ -44,6 +49,11 @@ export const verifyRefreshToken = (token: string) => {
 	try {
 		return jwt.verify(token, JWT_REFRESH_SECRET as string);
 	} catch (e) {
-		throw new AppError('유효하지 않은 Refresh Token입니다.', 403);
+		if (e instanceof jwt.TokenExpiredError)
+			throw new AppError('만료된 refreshToken 입니다.', 403);
+		else if (e instanceof jwt.JsonWebTokenError)
+			throw new AppError('유효하지 않은 refreshToken 입니다.', 401);
+		else
+			throw new AppError('토큰 검증 중 알 수 없는 오류가 발생했습니다.', 500);
 	}
 };

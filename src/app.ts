@@ -1,4 +1,5 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import cors from 'cors';
@@ -27,6 +28,7 @@ App.use(
 );
 
 App.use(express.json());
+App.use(cookieParser());
 
 const insertDummyData = async () => {
 	try {
