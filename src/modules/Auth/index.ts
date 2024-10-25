@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { localRegister } from './controller';
+import { localLogin, localRegister, logout } from './controller';
 
 const authRouter = Router();
 
@@ -9,11 +9,11 @@ authRouter.route('/register').post(localRegister);
 
 // @route	POST /api/auth/login
 // @desc	로그인
-authRouter.route('/login').post();
+authRouter.route('/login').post(localLogin);
 
 // @route	POST /api/auth/logout
 // @desc	로그아웃
-authRouter.route('/logout').post();
+authRouter.route('/logout').post(logout);
 
 // @route POST /api/auth/delete
 // @desc	회원탈퇴
