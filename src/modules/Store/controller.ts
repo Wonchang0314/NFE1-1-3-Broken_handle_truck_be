@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import moment from 'moment';
 import { getStores, postStore } from './service';
-import mongoose from 'mongoose';
+import { Types } from 'mongoose';
 import { IStore } from '@/models/Store';
 import { AppError } from '@/utils';
 
@@ -32,12 +32,20 @@ export const postStoreController = async (
 	next: NextFunction,
 ) => {
 	try {
+		const user = req.user;
 		const { coordinates, isOpen, category, paymentMethod } = req.body;
-		if (!coordinates || !category || !paymentMethod) {
-			throw new Error('가게 등록을 위한 정보가 누락되었습니다');
-		}
+
+		if (!user)
+			throw new AppError(
+				'사용자 인증 정보가 없습니다. 잘못된 접근입니다.',
+				401,
+			);
+
+		if (!coordinates || !category || !paymentMethod)
+			throw new AppError('가게 등록을 위한 정보가 누락된 요청입니다.', 400);
+
 		const newStore: IStore = {
-			ownerId: new mongoose.Types.ObjectId(),
+			ownerId: new Types.ObjectId(user.id),
 			coordinates: coordinates,
 			isOpen: isOpen,
 			category: category,
@@ -45,8 +53,12 @@ export const postStoreController = async (
 			createdAt: moment().format('YYYY-MM-DD HH:mm'),
 			updatedAt: moment().format('YYYY-MM-DD HH:mm'),
 		};
-		const response = await postStore(newStore, next);
-		res.status(200).json(response);
+
+		const store = await postStore(newStore);
+		res.status(200).json({
+			msg: 'ok',
+			store,
+		});
 	} catch (error) {
 		next(error);
 	}

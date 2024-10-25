@@ -1,6 +1,5 @@
 import { IStore } from '@/models/Store';
 import { Store } from '@/models';
-import { NextFunction } from 'express';
 import { AppError } from '@/utils';
 
 export const getStores = async (
@@ -23,22 +22,30 @@ export const getStores = async (
 	return stores;
 };
 
-export const postStore = async (newStore: IStore, next: NextFunction) => {
-	try {
-		const updatedStore = await Store.findOneAndUpdate(
-			{
-				ownerId: newStore.ownerId, // ownerId 같으면 교체
+export const postStore = async (newStore: IStore) => {
+	const updatedStore = await Store.findOneAndUpdate(
+		{
+			ownerId: newStore.ownerId, // ownerId 같으면 교체
+		},
+		{
+			$set: {
+				coordinates: newStore.coordinates,
+				isOpen: newStore.isOpen,
+				category: newStore.category,
+				paymentMethod: newStore.paymentMethod,
+				updatedAt: newStore.updatedAt,
 			},
-			newStore,
-			{
-				upsert: true, // 없으면 업데이트
-				new: true,
+			$setOnInsert: {
+				createdAt: newStore.createdAt,
 			},
-		);
+		},
+		{
+			upsert: true, // 없으면 업데이트
+			new: true,
+		},
+	);
 
-		console.log('가게 생성/업데이트 완료!');
-		return updatedStore;
-	} catch (error) {
-		next(error);
-	}
+	if (!updatedStore) throw new AppError('Store 등록에 실패했습니다', 500);
+
+	return updatedStore;
 };
