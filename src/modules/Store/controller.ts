@@ -3,6 +3,7 @@ import moment from 'moment';
 import { getStores, postStore } from './service';
 import mongoose from 'mongoose';
 import { IStore } from '@/models/Store';
+import { AppError } from '@/utils';
 
 export const getStoresController = async (
 	req: Request,
@@ -10,16 +11,19 @@ export const getStoresController = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { coordinates } = req.body;
-		if (!coordinates) {
-			throw new Error('위도와 경도를 제공해야 합니다');
-		}
-		const stores = await getStores(coordinates[0], coordinates[1]);
-		res.status(200).json(stores);
+		const { lat, lon } = req.query;
+
+		if (!lat || !lon)
+			throw new AppError('위도, 경도 정보가 누락된 요청입니다.', 400);
+
+		const stores = await getStores(Number(lat), Number(lon));
+		res.status(200).json({
+			msg: 'ok',
+			stores,
+		});
 	} catch (error) {
 		next(error);
 	}
-	return;
 };
 
 export const postStoreController = async (

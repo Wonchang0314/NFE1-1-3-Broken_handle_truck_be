@@ -1,26 +1,26 @@
 import { IStore } from '@/models/Store';
 import { Store } from '@/models';
 import { NextFunction } from 'express';
+import { AppError } from '@/utils';
 
 export const getStores = async (
 	latitude: number = 0,
 	longitude: number = 0,
 ) => {
-	try {
-		const radiusInKm = 1;
-		const earthRadiusInKm = 6378.1;
-		const stores = await Store.find({
-			coordinates: {
-				$geoWithin: {
-					$centerSphere: [[latitude, longitude], radiusInKm / earthRadiusInKm],
-				},
+	const radiusInKm = 1;
+	const earthRadiusInKm = 6378.1;
+	const stores = await Store.find({
+		coordinates: {
+			$geoWithin: {
+				$centerSphere: [[latitude, longitude], radiusInKm / earthRadiusInKm],
 			},
-		});
-		return stores;
-	} catch (error) {
-		console.log(error);
-		throw new Error('데이터를 불러오는데 실패했습니다');
-	}
+		},
+	});
+
+	if (!stores)
+		throw new AppError('Store 데이터를 불러오는데 실패했습니다', 500);
+
+	return stores;
 };
 
 export const postStore = async (newStore: IStore, next: NextFunction) => {
