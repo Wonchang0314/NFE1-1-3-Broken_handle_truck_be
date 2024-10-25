@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+	deleteStoreController,
 	getStoreController,
 	getStoresController,
 	postStoreController,
@@ -13,6 +14,7 @@ storeRouter
 	.route('/')
 	.all(authHandler)
 	.post(postStoreController)
-	.get(getStoreController);
+	.get(getStoreController)
+	.delete(deleteStoreController);
 
 export default storeRouter;

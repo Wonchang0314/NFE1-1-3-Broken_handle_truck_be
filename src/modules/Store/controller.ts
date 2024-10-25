@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import moment from 'moment';
-import { getStore, getStores, postStore } from './service';
+import { deleteStore, getStore, getStores, postStore } from './service';
 import { Types } from 'mongoose';
 import { IStore } from '@/models/Store';
 import { AppError } from '@/utils';
@@ -85,5 +85,28 @@ export const getStoreController = async (
 		});
 	} catch (error) {
 		next(error);
+	}
+};
+
+export const deleteStoreController = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const user = req.user;
+
+		if (!user)
+			throw new AppError(
+				'사용자 인증 정보가 없습니다. 잘못된 접근입니다.',
+				401,
+			);
+
+		await deleteStore(user.id);
+		res.status(200).json({
+			msg: 'ok',
+		});
+	} catch (e) {
+		next(e);
 	}
 };

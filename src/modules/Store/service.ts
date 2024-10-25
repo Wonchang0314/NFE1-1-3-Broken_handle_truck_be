@@ -1,5 +1,5 @@
 import { IStore } from '@/models/Store';
-import { Store } from '@/models';
+import { Store, Comment } from '@/models';
 import { AppError } from '@/utils';
 
 export const getStores = async (
@@ -54,4 +54,17 @@ export const getStore = async (ownerId: string) => {
 	const store = await Store.findOne({ ownerId });
 
 	return store;
+};
+
+export const deleteStore = async (ownerId: string) => {
+	const store = await Store.findOne({ ownerId });
+
+	if (!store) throw new AppError('Store가 존재하지 않습니다.', 404);
+
+	const deletedComment = await Comment.deleteMany({ storeId: store.id });
+	if (!deletedComment)
+		throw new AppError('Store와 관련된 Comments 삭제에 실패했습니다.', 500);
+
+	const deletedStore = await Store.findByIdAndDelete(store.id);
+	if (!deletedStore) throw new AppError('Store 삭제에 실패했습니다.', 500);
 };
