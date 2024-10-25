@@ -1,3 +1,4 @@
+import moment from 'moment';
 import mongoose, { Schema, Types } from 'mongoose';
 
 export interface IStore {
@@ -16,8 +17,8 @@ const storeSchema = new Schema({
 	isOpen: { type: Boolean, default: false },
 	category: { type: String, required: true },
 	paymentMethod: [{ type: String, enum: ['현금', '카드', '계좌이체'] }],
-	createdAt: { type: String, required: true },
-	updatedAt: { type: String },
+	createdAt: { type: String, deafult: moment().format('YYYY-MM-DD HH:mm') },
+	updatedAt: { type: String, default: moment().format('YYYY-MM-DD HH:mm') },
 });
 
 storeSchema.index({ coordinates: '2dsphere' });
