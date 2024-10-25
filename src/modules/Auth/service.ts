@@ -14,13 +14,17 @@ export const localRegisterUser = async (email: string, password: string) => {
 		email,
 		password,
 	});
-	await newUser.save();
+	const user = await newUser.save();
 
 	// 3. 토큰 생성
 	const accessToken = generateAccessToken({ id: newUser.id });
 	const refreshToken = generateRefreshToken({ id: newUser.id });
 
-	return { accessToken, refreshToken, user: newUser.id };
+	return {
+		accessToken,
+		refreshToken,
+		user: { _id: user.id, email: user.email },
+	};
 };
 
 // 로그인 로직
@@ -37,5 +41,9 @@ export const localLoginUser = async (email: string, password: string) => {
 	const accessToken = generateAccessToken({ id: user.id });
 	const refreshToken = generateRefreshToken({ id: user.id });
 
-	return { accessToken, refreshToken, user: user.id };
+	return {
+		accessToken,
+		refreshToken,
+		user: { _id: user.id, email: user.email },
+	};
 };
