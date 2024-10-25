@@ -28,7 +28,7 @@ export const localRegister = async (
 		// 4. 응답 전송
 		res.status(200).json({
 			msg: 'ok',
-			_id: user,
+			user,
 		});
 	} catch (e) {
 		next(e);
@@ -61,7 +61,7 @@ export const localLogin = async (
 		// 4. 응답 전송
 		res.status(200).json({
 			msg: 'ok',
-			_id: user,
+			user,
 		});
 	} catch (e) {
 		next(e);
