@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import { AppError } from '@/utils';
 
-export const getComments = async (storeId: mongoose.Types.ObjectId) => {
-	return await Comment.find({ storeId });
+export const getComments = async (storeId: string) => {
+	return await Comment.find({ storeId }).select('-password');
 };
 
 export const postComment = async (

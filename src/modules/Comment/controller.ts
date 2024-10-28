@@ -8,12 +8,15 @@ export const getCommentController = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { storeId } = req.body;
+		const { storeId } = req.query;
 		if (!storeId) {
-			throw new AppError('가게ID가 빈채로 요청되었습니다', 400);
+			throw new AppError('댓글 조회를 위한 storeId 값이 누락되었습니다.', 400);
 		}
-		const comments = await getComments(storeId);
-		res.status(200).json(comments);
+		const comments = await getComments(storeId as string);
+		res.status(200).json({
+			msg: 'ok',
+			comments,
+		});
 	} catch (error) {
 		next(error);
 	}
