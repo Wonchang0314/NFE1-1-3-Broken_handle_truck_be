@@ -27,7 +27,7 @@ export const generateRefreshToken = (payload: object): string => {
 };
 
 /**
- * Refresh Token 검증 함수
+ * Access Token 검증 함수
  */
 export const verifyAccessToken = (token: string) => {
 	try {
