@@ -61,20 +61,34 @@ export const deleteStore = async (ownerId: string) => {
 	const session = await mongoose.startSession();
 	session.startTransaction();
 
-	const store = await Store.findOne({ ownerId });
-	if (!store) throw new AppError('Store가 존재하지 않습니다.', 404);
+	try {
+		const store = await Store.findOne({ ownerId });
+		if (!store) throw new AppError('Store가 존재하지 않습니다.', 404);
 
-	const deletedComments = await Comment.deleteMany({
-		storeId: store.id,
-	}).session(session);
-	if (!deletedComments)
-		throw new AppError('Store와 관련된 Comments 삭제에 실패했습니다', 500);
+		const deletedComments = await Comment.deleteMany({
+			storeId: store.id,
+		}).session(session);
+		if (!deletedComments)
+			throw new AppError('Store와 관련된 Comments 삭제에 실패했습니다', 500);
 
-	const deletedStore = await Store.findOneAndDelete({ id: store.id }).session(
-		session,
-	);
-	if (!deletedStore) throw new AppError('Store 삭제에 실패했습니다.', 500);
+		const deletedStore = await Store.findOneAndDelete({ id: store.id }).session(
+			session,
+		);
+		if (!deletedStore) throw new AppError('Store 삭제에 실패했습니다.', 500);
 
-	await session.commitTransaction();
-	session.endSession();
+		await session.commitTransaction();
+		session.endSession();
+	} catch (e) {
+		await session.abortTransaction();
+		session.endSession();
+
+		if (e instanceof AppError) {
+			throw e;
+		} else {
+			throw new AppError(
+				'Store 삭제에 실패했습니다. 모든 작업이 원복됩니다.',
+				500,
+			);
+		}
+	}
 };
