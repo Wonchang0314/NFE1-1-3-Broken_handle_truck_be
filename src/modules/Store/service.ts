@@ -54,7 +54,15 @@ export const postStore = async (newStore: IStore) => {
 export const getStore = async (ownerId: string) => {
 	const store = await Store.findOne({ ownerId });
 
-	return store;
+	if (store) {
+		const comments = await Comment.find({ storeId: store.id }).select(
+			'-password',
+		);
+
+		return { store, comments };
+	}
+
+	return { store, comments: null };
 };
 
 export const deleteStore = async (ownerId: string) => {

@@ -84,10 +84,11 @@ export const getStoreController = async (
 				401,
 			);
 
-		const store = await getStore(user.id);
+		const { store, comments } = await getStore(user.id);
 		res.status(200).json({
 			msg: 'ok',
 			store,
+			comments,
 		});
 	} catch (error) {
 		next(error);
