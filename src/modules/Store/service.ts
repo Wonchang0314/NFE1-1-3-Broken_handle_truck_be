@@ -30,6 +30,7 @@ export const postStore = async (newStore: IStore) => {
 		},
 		{
 			$set: {
+				name: newStore.name,
 				coordinates: newStore.coordinates,
 				isOpen: newStore.isOpen,
 				category: newStore.category,

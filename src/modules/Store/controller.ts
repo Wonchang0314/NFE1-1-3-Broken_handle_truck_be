@@ -39,7 +39,7 @@ export const postStoreController = async (
 ) => {
 	try {
 		const user = req.user;
-		const { coordinates, isOpen, category, paymentMethod } = req.body;
+		const { name, coordinates, isOpen, category, paymentMethod } = req.body;
 
 		if (!user)
 			throw new AppError(
@@ -51,6 +51,7 @@ export const postStoreController = async (
 			throw new AppError('가게 등록을 위한 정보가 누락된 요청입니다.', 400);
 
 		const newStore: IStore = {
+			name,
 			ownerId: new Types.ObjectId(user.id),
 			coordinates: coordinates,
 			isOpen: isOpen,
