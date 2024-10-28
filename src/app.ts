@@ -22,7 +22,7 @@ App.use(hpp());
 // Cors 설정
 App.use(
 	cors({
-		origin: FRONT_BASE_URL || 'http://localhost:5173',
+		origin: '*',
 		credentials: true,
 	}),
 );
