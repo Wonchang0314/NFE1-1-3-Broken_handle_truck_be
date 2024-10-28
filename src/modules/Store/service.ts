@@ -1,6 +1,7 @@
 import { IStore } from '@/models/Store';
 import { Store, Comment } from '@/models';
 import { AppError } from '@/utils';
+import mongoose from 'mongoose';
 
 export const getStores = async (
 	latitude: number = 0,
@@ -57,14 +58,23 @@ export const getStore = async (ownerId: string) => {
 };
 
 export const deleteStore = async (ownerId: string) => {
-	const store = await Store.findOne({ ownerId });
+	const session = await mongoose.startSession();
+	session.startTransaction();
 
+	const store = await Store.findOne({ ownerId });
 	if (!store) throw new AppError('Store가 존재하지 않습니다.', 404);
 
-	const deletedComment = await Comment.deleteMany({ storeId: store.id });
-	if (!deletedComment)
-		throw new AppError('Store와 관련된 Comments 삭제에 실패했습니다.', 500);
+	const deletedComments = await Comment.deleteMany({
+		storeId: store.id,
+	}).session(session);
+	if (!deletedComments)
+		throw new AppError('Store와 관련된 Comments 삭제에 실패했습니다', 500);
 
-	const deletedStore = await Store.findByIdAndDelete(store.id);
+	const deletedStore = await Store.findOneAndDelete({ id: store.id }).session(
+		session,
+	);
 	if (!deletedStore) throw new AppError('Store 삭제에 실패했습니다.', 500);
+
+	await session.commitTransaction();
+	session.endSession();
 };
