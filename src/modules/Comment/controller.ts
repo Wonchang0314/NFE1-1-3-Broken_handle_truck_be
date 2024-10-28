@@ -26,11 +26,15 @@ export const postCommentController = async (
 ) => {
 	try {
 		const { content, password, storeId } = req.body;
-		if (!content || !storeId) {
+		if (!content || !storeId || !password) {
 			throw new AppError('댓글 생성을 위해 필요한 값이 누락되었습니다', 400);
 		}
-		const createdComment = await postComment(content, password, storeId);
-		res.status(201).json(createdComment);
+
+		const comment = await postComment(content, password, storeId);
+		res.status(201).json({
+			msg: 'ok',
+			comment,
+		});
 	} catch (error) {
 		next(error);
 	}
