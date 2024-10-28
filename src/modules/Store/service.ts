@@ -3,19 +3,41 @@ import { Store, Comment } from '@/models';
 import { AppError } from '@/utils';
 import mongoose from 'mongoose';
 
+interface IQueries {
+	coordinates: {
+		$geoWithin: {
+			$centerSphere: [number[], number];
+		};
+	};
+	category?: string;
+	name?: { $regex: string; $options: string };
+}
 export const getStores = async (
 	latitude: number = 0,
 	longitude: number = 0,
+	category?: string,
+	name?: string,
 ) => {
 	const radiusInKm = 1;
 	const earthRadiusInKm = 6378.1;
-	const stores = await Store.find({
+
+	const queries: IQueries = {
 		coordinates: {
 			$geoWithin: {
 				$centerSphere: [[latitude, longitude], radiusInKm / earthRadiusInKm],
 			},
 		},
-	});
+	};
+
+	if (category) {
+		queries.category = category;
+	}
+
+	if (name) {
+		queries.name = { $regex: name, $options: 'i' };
+	}
+
+	const stores = await Store.find(queries);
 
 	if (!stores)
 		throw new AppError('Store 데이터를 불러오는데 실패했습니다', 500);

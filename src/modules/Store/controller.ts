@@ -17,12 +17,18 @@ export const getStoresController = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { lat, lon } = req.query;
+		const { lat, lon, category, name } = req.query;
 
 		if (!lat || !lon)
 			throw new AppError('위도, 경도 정보가 누락된 요청입니다.', 400);
 
-		const stores = await getStores(Number(lat), Number(lon));
+		const stores = await getStores(
+			Number(lat),
+			Number(lon),
+			category as string,
+			name as string,
+		);
+
 		res.status(200).json({
 			msg: 'ok',
 			stores,
