@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt';
-import { User } from '@/models';
+import { Comment, Store, User } from '@/models';
 import { AppError } from '@/utils';
 import { generateAccessToken, generateRefreshToken } from '@/utils/jwt';
+import mongoose from 'mongoose';
 
 // 회원가입 로직
 export const localRegisterUser = async (email: string, password: string) => {
@@ -14,13 +15,17 @@ export const localRegisterUser = async (email: string, password: string) => {
 		email,
 		password,
 	});
-	await newUser.save();
+	const user = await newUser.save();
 
 	// 3. 토큰 생성
 	const accessToken = generateAccessToken({ id: newUser.id });
 	const refreshToken = generateRefreshToken({ id: newUser.id });
 
-	return { accessToken, refreshToken, user: newUser.id };
+	return {
+		accessToken,
+		refreshToken,
+		user: { _id: user.id, email: user.email },
+	};
 };
 
 // 로그인 로직
@@ -37,5 +42,45 @@ export const localLoginUser = async (email: string, password: string) => {
 	const accessToken = generateAccessToken({ id: user.id });
 	const refreshToken = generateRefreshToken({ id: user.id });
 
-	return { accessToken, refreshToken, user: user.id };
+	return {
+		accessToken,
+		refreshToken,
+		user: { _id: user.id, email: user.email },
+	};
+};
+
+// 회원탈퇴 로직
+export const deleteUser = async (userId: string) => {
+	const session = await mongoose.startSession();
+	session.startTransaction();
+
+	try {
+		// 1. 사용자 조회
+		const user = await User.findById(userId).session(session);
+		if (!user) throw new AppError('사용자 정보를 찾을 수 없습니다.', 404);
+
+		// 2. 사용자의 Store 확인 및 관련 Comment 삭제
+		const store = await Store.findOne({ ownerId: userId }).session(session);
+		if (store) {
+			await Comment.deleteMany({ storeId: store.id }).session(session);
+			await Store.findByIdAndDelete(store.id).session(session);
+		}
+
+		// 3. 사용자 삭제
+		await User.findByIdAndDelete(user.id).session(session);
+
+		await session.commitTransaction();
+	} catch (e) {
+		await session.abortTransaction();
+		session.endSession();
+
+		if (e instanceof AppError) throw e;
+		else
+			throw new AppError(
+				'회원 탈퇴 중 오류가 발생했습니다. 모든 작업이 원복됩니다.',
+				500,
+			);
+	} finally {
+		session.endSession();
+	}
 };

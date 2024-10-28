@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 // 경도, 위도 순서로 되어있어야함
 const dummyStores = [
 	{
+		name: '스토어 1',
 		ownerId: new mongoose.Types.ObjectId(),
 		coordinates: [-122.4194, 37.7749],
 		isOpen: true,
@@ -13,6 +14,7 @@ const dummyStores = [
 		updatedAt: moment().format('YYYY-MM-DD HH:mm'),
 	},
 	{
+		name: '스토어 2',
 		ownerId: new mongoose.Types.ObjectId(),
 		coordinates: [-74.006, 40.7128],
 		isOpen: false,
@@ -22,6 +24,7 @@ const dummyStores = [
 		updatedAt: moment().format('YYYY-MM-DD HH:mm'),
 	},
 	{
+		name: '스토어 3',
 		ownerId: new mongoose.Types.ObjectId(),
 		coordinates: [-118.2437, 34.0522],
 		isOpen: true,

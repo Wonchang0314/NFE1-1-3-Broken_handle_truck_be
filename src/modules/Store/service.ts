@@ -1,44 +1,106 @@
 import { IStore } from '@/models/Store';
-import { Store } from '@/models';
-import { NextFunction } from 'express';
+import { Store, Comment } from '@/models';
+import { AppError } from '@/utils';
+import mongoose from 'mongoose';
 
 export const getStores = async (
 	latitude: number = 0,
 	longitude: number = 0,
 ) => {
-	try {
-		const radiusInKm = 1;
-		const earthRadiusInKm = 6378.1;
-		const stores = await Store.find({
-			coordinates: {
-				$geoWithin: {
-					$centerSphere: [[latitude, longitude], radiusInKm / earthRadiusInKm],
-				},
+	const radiusInKm = 1;
+	const earthRadiusInKm = 6378.1;
+	const stores = await Store.find({
+		coordinates: {
+			$geoWithin: {
+				$centerSphere: [[latitude, longitude], radiusInKm / earthRadiusInKm],
 			},
-		});
-		return stores;
-	} catch (error) {
-		console.log(error);
-		throw new Error('데이터를 불러오는데 실패했습니다');
+		},
+	});
+
+	if (!stores)
+		throw new AppError('Store 데이터를 불러오는데 실패했습니다', 500);
+
+	return stores;
+};
+
+export const postStore = async (newStore: IStore) => {
+	const updatedStore = await Store.findOneAndUpdate(
+		{
+			ownerId: newStore.ownerId, // ownerId 같으면 교체
+		},
+		{
+			$set: {
+				name: newStore.name,
+				coordinates: newStore.coordinates,
+				isOpen: newStore.isOpen,
+				category: newStore.category,
+				paymentMethod: newStore.paymentMethod,
+				updatedAt: newStore.updatedAt,
+			},
+			$setOnInsert: {
+				createdAt: newStore.createdAt,
+			},
+		},
+		{
+			upsert: true, // 없으면 업데이트
+			new: true,
+		},
+	);
+
+	if (!updatedStore) throw new AppError('Store 등록에 실패했습니다', 500);
+
+	return updatedStore;
+};
+
+export const getStore = async (ownerId: string) => {
+	const store = await Store.findOne({ ownerId });
+
+	if (store) {
+		const comments = await Comment.find({ storeId: store.id }).select(
+			'-password',
+		);
+
+		return { store, comments };
+	}
+
+	return { store, comments: null };
+};
+
+export const deleteStore = async (ownerId: string) => {
+	const session = await mongoose.startSession();
+	session.startTransaction();
+
+	try {
+		const store = await Store.findOne({ ownerId });
+		if (!store) throw new AppError('Store가 존재하지 않습니다.', 404);
+
+		await Comment.deleteMany({
+			storeId: store.id,
+		}).session(session);
+		await Store.findByIdAndDelete(store.id).session(session);
+
+		await session.commitTransaction();
+	} catch (e) {
+		await session.abortTransaction();
+
+		if (e instanceof AppError) {
+			throw e;
+		} else {
+			throw new AppError(
+				'Store 삭제에 실패했습니다. 모든 작업이 원복됩니다.',
+				500,
+			);
+		}
+	} finally {
+		session.endSession();
 	}
 };
 
-export const postStore = async (newStore: IStore, next: NextFunction) => {
-	try {
-		const updatedStore = await Store.findOneAndUpdate(
-			{
-				ownerId: newStore.ownerId, // ownerId 같으면 교체
-			},
-			newStore,
-			{
-				upsert: true, // 없으면 업데이트
-				new: true,
-			},
-		);
+export const getStoreById = async (storeId: string) => {
+	const store = await Store.findById(storeId);
+	if (!store) throw new AppError('Store가 존재하지 않습니다.', 404);
 
-		console.log('가게 생성/업데이트 완료!');
-		return updatedStore;
-	} catch (error) {
-		next(error);
-	}
+	const comments = await Comment.find({ storeId }).select('-password');
+
+	return { store, comments };
 };

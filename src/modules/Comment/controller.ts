@@ -8,12 +8,15 @@ export const getCommentController = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { storeId } = req.body;
+		const { storeId } = req.query;
 		if (!storeId) {
-			throw new AppError('가게ID가 빈채로 요청되었습니다', 400);
+			throw new AppError('댓글 조회를 위한 storeId 값이 누락되었습니다.', 400);
 		}
-		const comments = await getComments(storeId);
-		res.status(200).json(comments);
+		const comments = await getComments(storeId as string);
+		res.status(200).json({
+			msg: 'ok',
+			comments,
+		});
 	} catch (error) {
 		next(error);
 	}
@@ -26,11 +29,15 @@ export const postCommentController = async (
 ) => {
 	try {
 		const { content, password, storeId } = req.body;
-		if (!content || !storeId) {
+		if (!content || !storeId || !password) {
 			throw new AppError('댓글 생성을 위해 필요한 값이 누락되었습니다', 400);
 		}
-		const createdComment = await postComment(content, password, storeId);
-		res.status(201).json(createdComment);
+
+		const comment = await postComment(content, password, storeId);
+		res.status(201).json({
+			msg: 'ok',
+			comment,
+		});
 	} catch (error) {
 		next(error);
 	}
@@ -42,14 +49,22 @@ export const deleteCommentController = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { id } = req.body;
-		if (!id)
-			throw new AppError('댓글 삭제 요청 body에 id값이 누락되었습니다', 400);
-		const deleted = await deleteComment(id);
-		if (deleted.deletedCount === 0) {
-			next(new Error('댓글을 찾을 수 없습니다'));
+		const { commentId, commentPW } = req.body;
+		if (!commentId || !commentPW)
+			throw new AppError(
+				'댓글 삭제를 위한 commentId, commentPW 값이 누락되었습니다.',
+				400,
+			);
+
+		const comment = await deleteComment(commentId, commentPW);
+		if (comment.deletedCount === 0) {
+			next(new AppError('댓글을 찾을 수 없습니다', 404));
 		}
-		res.status(200).json(deleted);
+
+		res.status(200).json({
+			msg: 'ok',
+			comment,
+		});
 	} catch (error) {
 		next(error);
 	}

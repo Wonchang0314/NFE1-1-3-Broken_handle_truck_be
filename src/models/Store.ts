@@ -2,6 +2,7 @@ import moment from 'moment';
 import mongoose, { Schema, Types } from 'mongoose';
 
 export interface IStore {
+	name: string;
 	ownerId: Types.ObjectId;
 	coordinates: number[];
 	isOpen: boolean;
@@ -12,6 +13,7 @@ export interface IStore {
 }
 
 const storeSchema = new Schema({
+	name: { type: String, required: true },
 	ownerId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 	coordinates: [{ type: Number }],
 	isOpen: { type: Boolean, default: false },

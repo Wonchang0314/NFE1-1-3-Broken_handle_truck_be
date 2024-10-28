@@ -1,6 +1,6 @@
 import { AppError, clearCookie, sendCookie } from '@/utils';
 import { NextFunction, Request, Response } from 'express';
-import { localLoginUser, localRegisterUser } from './service';
+import { deleteUser, localLoginUser, localRegisterUser } from './service';
 
 // 회원가입
 export const localRegister = async (
@@ -27,8 +27,8 @@ export const localRegister = async (
 
 		// 4. 응답 전송
 		res.status(200).json({
-			userId: user,
-			msg: '회원가입이 완료되었습니다.',
+			msg: 'ok',
+			user,
 		});
 	} catch (e) {
 		next(e);
@@ -60,8 +60,8 @@ export const localLogin = async (
 
 		// 4. 응답 전송
 		res.status(200).json({
-			userId: user,
-			msg: '로그인이 완료되었습니다.',
+			msg: 'ok',
+			user,
 		});
 	} catch (e) {
 		next(e);
@@ -80,10 +80,38 @@ export const logout = async (
 		clearCookie(res, 'accessToken');
 
 		res.status(200).json({
-			msg: '로그아웃 되었습니다.',
+			msg: 'ok',
 		});
 	} catch (e) {
 		const customError = new AppError('로그아웃에 실패 했습니다.', 500);
 		next(customError);
+	}
+};
+
+// 회원탈퇴
+export const deleteUserController = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const user = req.user;
+
+		if (!user)
+			throw new AppError(
+				'사용자 인증 정보가 없습니다. 잘못된 접근입니다.',
+				401,
+			);
+
+		await deleteUser(user.id);
+
+		clearCookie(res, 'refreshToken');
+		clearCookie(res, 'accessToken');
+
+		res.status(200).json({
+			msg: 'ok',
+		});
+	} catch (e) {
+		next(e);
 	}
 };

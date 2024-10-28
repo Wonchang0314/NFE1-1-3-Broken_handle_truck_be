@@ -18,7 +18,8 @@ const authHandler = async (req: Request, res: Response, next: NextFunction) => {
 
 		// 2. 액세스 토큰 검증
 		try {
-			verifyAccessToken(accessToken);
+			const decoded = verifyAccessToken(accessToken);
+			req.user = decoded as { id: string };
 
 			return next();
 		} catch (e) {
@@ -51,6 +52,7 @@ const refreshTokenHandler = (
 
 		// 1. 리프레시 토큰 검증
 		const decoded = verifyRefreshToken(refreshToken) as { id: string };
+		req.user = decoded;
 
 		// 2. 새로운 토큰 발급
 		const newAccessToken = generateAccessToken({ id: decoded.id });

@@ -7,8 +7,10 @@ import {
 
 const commentRouter = Router();
 
-commentRouter.route('/').get(getCommentController);
-commentRouter.route('/').post(postCommentController);
-commentRouter.route('/').delete(deleteCommentController);
+commentRouter
+	.route('/')
+	.get(getCommentController)
+	.post(postCommentController)
+	.delete(deleteCommentController);
 
 export default commentRouter;
