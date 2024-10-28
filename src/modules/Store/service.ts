@@ -24,7 +24,7 @@ export const getStores = async (
 	const queries: IQueries = {
 		coordinates: {
 			$geoWithin: {
-				$centerSphere: [[latitude, longitude], radiusInKm / earthRadiusInKm],
+				$centerSphere: [[longitude, latitude], radiusInKm / earthRadiusInKm],
 			},
 		},
 	};
