@@ -65,22 +65,14 @@ export const deleteStore = async (ownerId: string) => {
 		const store = await Store.findOne({ ownerId });
 		if (!store) throw new AppError('Store가 존재하지 않습니다.', 404);
 
-		const deletedComments = await Comment.deleteMany({
+		await Comment.deleteMany({
 			storeId: store.id,
 		}).session(session);
-		if (!deletedComments)
-			throw new AppError('Store와 관련된 Comments 삭제에 실패했습니다', 500);
-
-		const deletedStore = await Store.findOneAndDelete({ id: store.id }).session(
-			session,
-		);
-		if (!deletedStore) throw new AppError('Store 삭제에 실패했습니다.', 500);
+		await Store.findByIdAndDelete(store.id).session(session);
 
 		await session.commitTransaction();
-		session.endSession();
 	} catch (e) {
 		await session.abortTransaction();
-		session.endSession();
 
 		if (e instanceof AppError) {
 			throw e;
@@ -90,5 +82,7 @@ export const deleteStore = async (ownerId: string) => {
 				500,
 			);
 		}
+	} finally {
+		session.endSession();
 	}
 };
