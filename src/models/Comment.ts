@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 import { AppError } from '@/utils';
+import moment from 'moment';
 
 export interface IComment extends Document {
 	storeId: Types.ObjectId;
@@ -17,6 +18,10 @@ const commentSchema = new Schema({
 	},
 	content: { type: String, required: true },
 	password: { type: String, required: true },
+	createdAt: {
+		type: String,
+		default: () => moment().format('YYYY-MM-DD HH:mm'),
+	},
 });
 
 const Comment = mongoose.model<IComment>('Comment', commentSchema);
