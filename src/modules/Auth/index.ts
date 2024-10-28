@@ -1,5 +1,11 @@
 import { Router } from 'express';
-import { localLogin, localRegister, logout } from './controller';
+import {
+	deleteUserController,
+	localLogin,
+	localRegister,
+	logout,
+} from './controller';
+import { authHandler } from '@/middlewares';
 
 const authRouter = Router();
 
@@ -13,10 +19,10 @@ authRouter.route('/login').post(localLogin);
 
 // @route	POST /api/auth/logout
 // @desc	로그아웃
-authRouter.route('/logout').post(logout);
+authRouter.route('/logout').all(authHandler).post(logout);
 
 // @route POST /api/auth/delete
 // @desc	회원탈퇴
-authRouter.route('/delete').post();
+authRouter.route('/delete').all(authHandler).delete(deleteUserController);
 
 export default authRouter;
