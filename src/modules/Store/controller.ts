@@ -1,6 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
 import moment from 'moment';
-import { deleteStore, getStore, getStores, postStore } from './service';
+import {
+	deleteStore,
+	getStore,
+	getStoreById,
+	getStores,
+	postStore,
+} from './service';
 import { Types } from 'mongoose';
 import { IStore } from '@/models/Store';
 import { AppError } from '@/utils';
@@ -105,6 +111,27 @@ export const deleteStoreController = async (
 		await deleteStore(user.id);
 		res.status(200).json({
 			msg: 'ok',
+		});
+	} catch (e) {
+		next(e);
+	}
+};
+
+export const getStoreByIdController = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const { storeId } = req.params;
+		if (!storeId) throw new AppError('storeId 정보가 누락되었습니다.', 400);
+
+		const { store, comments } = await getStoreById(storeId as string);
+
+		res.status(200).json({
+			msg: 'ok',
+			store,
+			comments,
 		});
 	} catch (e) {
 		next(e);

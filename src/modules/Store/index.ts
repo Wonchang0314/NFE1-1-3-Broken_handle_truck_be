@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
 	deleteStoreController,
+	getStoreByIdController,
 	getStoreController,
 	getStoresController,
 	postStoreController,
@@ -16,5 +17,6 @@ storeRouter
 	.post(postStoreController)
 	.get(getStoreController)
 	.delete(deleteStoreController);
+storeRouter.route('/:storeId([0-9a-f]{24})').get(getStoreByIdController);
 
 export default storeRouter;

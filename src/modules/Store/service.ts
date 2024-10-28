@@ -86,3 +86,12 @@ export const deleteStore = async (ownerId: string) => {
 		session.endSession();
 	}
 };
+
+export const getStoreById = async (storeId: string) => {
+	const store = await Store.findById(storeId);
+	if (!store) throw new AppError('Store가 존재하지 않습니다.', 404);
+
+	const comments = await Comment.find({ storeId });
+
+	return { store, comments };
+};
