@@ -24,10 +24,6 @@ const commentSchema = new Schema({
 	},
 });
 
-const Comment = mongoose.model<IComment>('Comment', commentSchema);
-
-export default Comment;
-
 commentSchema.pre('save', async function (next) {
 	const comment = this as IComment;
 
@@ -45,3 +41,7 @@ commentSchema.pre('save', async function (next) {
 		}
 	}
 });
+
+const Comment = mongoose.model<IComment>('Comment', commentSchema);
+
+export default Comment;
