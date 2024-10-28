@@ -53,8 +53,11 @@ userSchema.pre('save', async function (next) {
 		user.password = await bcrypt.hash(user.password, salt);
 		next();
 	} catch (e) {
-		const customErr = new AppError('비밀번호 해싱 중 오류가 발생했습니다', 500);
-		next(customErr);
+		if (e instanceof AppError) {
+			next(e);
+		} else {
+			next(new AppError('비밀번호 해싱 중 오류가 발생했습니다', 500));
+		}
 	}
 });
 
