@@ -46,14 +46,22 @@ export const deleteCommentController = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { id } = req.body;
-		if (!id)
-			throw new AppError('댓글 삭제 요청 body에 id값이 누락되었습니다', 400);
-		const deleted = await deleteComment(id);
-		if (deleted.deletedCount === 0) {
-			next(new Error('댓글을 찾을 수 없습니다'));
+		const { commentId, commentPW } = req.body;
+		if (!commentId || !commentPW)
+			throw new AppError(
+				'댓글 삭제를 위한 commentId, commentPW 값이 누락되었습니다.',
+				400,
+			);
+
+		const comment = await deleteComment(commentId, commentPW);
+		if (comment.deletedCount === 0) {
+			next(new AppError('댓글을 찾을 수 없습니다', 404));
 		}
-		res.status(200).json(deleted);
+
+		res.status(200).json({
+			msg: 'ok',
+			comment,
+		});
 	} catch (error) {
 		next(error);
 	}
