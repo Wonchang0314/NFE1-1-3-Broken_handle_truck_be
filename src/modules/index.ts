@@ -8,6 +8,6 @@ const apiRouter = Router();
 /* 라우팅 경로 추가 */
 apiRouter.use('/auth', authRouter);
 apiRouter.use('/store', storeRouter);
-apiRouter.use('/store/comment', commentRouter);
+apiRouter.use('/comment', commentRouter);
 
 export default apiRouter;
