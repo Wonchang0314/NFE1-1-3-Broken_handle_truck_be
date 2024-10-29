@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import {
 	deleteUserController,
+	kakaoCallbackController,
+	kakaoLoginController,
 	localLogin,
 	localRegister,
 	logout,
@@ -24,5 +26,12 @@ authRouter.route('/logout').all(authHandler).post(logout);
 // @route POST /api/auth/delete
 // @desc	회원탈퇴
 authRouter.route('/delete').all(authHandler).delete(deleteUserController);
+
+// @route	GET /api/auth/kakao
+// @desc	카카오로그인
+authRouter.route('/kakao').get(kakaoLoginController);
+
+// @route GET /api/auth/kakao/callback
+authRouter.route('/kakao/callback').get(kakaoCallbackController);
 
 export default authRouter;

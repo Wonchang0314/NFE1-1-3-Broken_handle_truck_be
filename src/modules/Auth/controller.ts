@@ -1,6 +1,15 @@
 import { AppError, clearCookie, sendCookie } from '@/utils';
 import { NextFunction, Request, Response } from 'express';
-import { deleteUser, localLoginUser, localRegisterUser } from './service';
+import {
+	deleteUser,
+	kakaoLogin,
+	localLoginUser,
+	localRegisterUser,
+} from './service';
+import config from '@/config';
+import { getKakaoToken, getKakaoUser } from '@/utils/kakao';
+import { generateAccessToken, generateRefreshToken } from '@/utils/jwt';
+const { KAKAO_REST_API_KEY, KAKAO_REDIRECT_URI, FRONT_BASE_URL } = config;
 
 // 회원가입
 export const localRegister = async (
@@ -113,5 +122,39 @@ export const deleteUserController = async (
 		});
 	} catch (e) {
 		next(e);
+	}
+};
+
+export const kakaoLoginController = async (req: Request, res: Response) => {
+	const url = `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_REST_API_KEY}&redirect_uri=${KAKAO_REDIRECT_URI}&response_type=code`;
+
+	res.redirect(url);
+};
+
+export const kakaoCallbackController = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const code = req.query.code as string;
+		const token = await getKakaoToken(code);
+		const userData = await getKakaoUser(token);
+
+		const user = await kakaoLogin(userData);
+
+		const accessToken = generateAccessToken({ id: user.id });
+		const refreshToken = generateRefreshToken({ id: user.id });
+
+		sendCookie(res, 'accessToken', accessToken, 1);
+		sendCookie(res, 'refreshToken', refreshToken, 24);
+
+		res.redirect(FRONT_BASE_URL || 'http://localhost:5173');
+	} catch (e) {
+		if (e instanceof AppError) {
+			next(e);
+		} else {
+			next(new AppError('카카오 인증 중 오류가 발생했습니다.', 500));
+		}
 	}
 };
