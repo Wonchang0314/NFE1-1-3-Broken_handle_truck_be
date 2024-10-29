@@ -3,6 +3,7 @@ import { Comment, Store, User } from '@/models';
 import { AppError } from '@/utils';
 import { generateAccessToken, generateRefreshToken } from '@/utils/jwt';
 import mongoose from 'mongoose';
+import { IUserData } from '@/utils/kakao';
 
 // 회원가입 로직
 export const localRegisterUser = async (email: string, password: string) => {
@@ -83,4 +84,18 @@ export const deleteUser = async (userId: string) => {
 	} finally {
 		session.endSession();
 	}
+};
+
+export const kakaoLogin = async (userData: IUserData) => {
+	let user = await User.findOne({ oAuthIdKey: userData.id, oAuth: 'Kakao' });
+
+	if (!user) {
+		const newUser = new User({
+			oAuth: 'Kakao',
+			oAuthIdKey: userData.id,
+		});
+		user = await newUser.save();
+	}
+
+	return user;
 };
