@@ -1,12 +1,20 @@
 import bcrypt from 'bcrypt';
 import { Comment, Store, User } from '@/models';
 import { AppError } from '@/utils';
-import { generateAccessToken, generateRefreshToken } from '@/utils/jwt';
+import {
+	generateAccessToken,
+	generateRefreshToken,
+	IPayload,
+} from '@/utils/jwt';
 import mongoose from 'mongoose';
 import { IUserData } from '@/utils/kakao';
 
 // 회원가입 로직
-export const localRegisterUser = async (email: string, password: string) => {
+export const localRegisterUser = async (
+	email: string,
+	password: string,
+	nickname: string,
+) => {
 	// 1. 중복가입 조회
 	const isUser = await User.findOne({ email });
 	if (isUser) throw new AppError('이미 가입된 이메일 입니다.', 409);
@@ -15,17 +23,23 @@ export const localRegisterUser = async (email: string, password: string) => {
 	const newUser = new User({
 		email,
 		password,
+		nickname,
 	});
 	const user = await newUser.save();
 
+	const payload: IPayload = {
+		_id: user.id,
+		nickname: user.nickname,
+	};
+
 	// 3. 토큰 생성
-	const accessToken = generateAccessToken({ id: newUser.id });
-	const refreshToken = generateRefreshToken({ id: newUser.id });
+	const accessToken = generateAccessToken(payload);
+	const refreshToken = generateRefreshToken(payload);
 
 	return {
 		accessToken,
 		refreshToken,
-		user: { _id: user.id, email: user.email },
+		user: { _id: user.id, nickname: user.nickname },
 	};
 };
 
@@ -39,14 +53,19 @@ export const localLoginUser = async (email: string, password: string) => {
 	const isMatch = await bcrypt.compare(password, user.password);
 	if (!isMatch) throw new AppError('잘못된 이메일 또는 패스워드 입니다.', 401);
 
+	const payload: IPayload = {
+		_id: user.id,
+		nickname: user.nickname,
+	};
+
 	// 3. 토큰 생성
-	const accessToken = generateAccessToken({ id: user.id });
-	const refreshToken = generateRefreshToken({ id: user.id });
+	const accessToken = generateAccessToken(payload);
+	const refreshToken = generateRefreshToken(payload);
 
 	return {
 		accessToken,
 		refreshToken,
-		user: { _id: user.id, email: user.email },
+		user: { _id: user.id, nickname: user.nickname },
 	};
 };
 

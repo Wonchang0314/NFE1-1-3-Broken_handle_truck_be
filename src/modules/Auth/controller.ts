@@ -8,7 +8,11 @@ import {
 } from './service';
 import config from '@/config';
 import { getKakaoToken, getKakaoUser } from '@/utils/kakao';
-import { generateAccessToken, generateRefreshToken } from '@/utils/jwt';
+import {
+	generateAccessToken,
+	generateRefreshToken,
+	IPayload,
+} from '@/utils/jwt';
 const { KAKAO_REST_API_KEY, KAKAO_REDIRECT_URI, FRONT_BASE_URL } = config;
 
 // 회원가입
@@ -18,16 +22,17 @@ export const localRegister = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { email, password } = req.body;
+		const { email, password, nickname } = req.body;
 
 		// 1. 간단한 유효성 검사
-		if (!email || !password)
+		if (!email || !password || !nickname)
 			throw new AppError('모든 필드 요소는 필수 입니다.', 400);
 
 		// 2. 회원가입 로직 호출
 		const { accessToken, refreshToken, user } = await localRegisterUser(
 			email,
 			password,
+			nickname,
 		);
 
 		// 3. 토큰 쿠기 전송
@@ -112,7 +117,7 @@ export const deleteUserController = async (
 				401,
 			);
 
-		await deleteUser(user.id);
+		await deleteUser(user._id);
 
 		clearCookie(res, 'refreshToken');
 		clearCookie(res, 'accessToken');
@@ -143,8 +148,13 @@ export const kakaoCallbackController = async (
 
 		const user = await kakaoLogin(userData);
 
-		const accessToken = generateAccessToken({ id: user.id });
-		const refreshToken = generateRefreshToken({ id: user.id });
+		const payload: IPayload = {
+			_id: user.id,
+			nickname: user.nickname,
+		};
+
+		const accessToken = generateAccessToken(payload);
+		const refreshToken = generateRefreshToken(payload);
 
 		sendCookie(res, 'accessToken', accessToken, 1);
 		sendCookie(res, 'refreshToken', refreshToken, 24);

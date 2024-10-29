@@ -5,10 +5,8 @@ import AppError from './AppError';
 const { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } = config;
 
 export interface IPayload {
-	user: {
-		_id: string;
-		nickname: string;
-	};
+	_id: string;
+	nickname: string;
 }
 
 /**

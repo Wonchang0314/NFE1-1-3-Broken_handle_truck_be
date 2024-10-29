@@ -58,7 +58,7 @@ export const postStoreController = async (
 
 		const newStore: IStore = {
 			name,
-			ownerId: new Types.ObjectId(user.id),
+			ownerId: new Types.ObjectId(user._id),
 			coordinates: coordinates,
 			isOpen: isOpen,
 			category: category,
@@ -91,7 +91,7 @@ export const getStoreController = async (
 				401,
 			);
 
-		const { store, comments } = await getStore(user.id);
+		const { store, comments } = await getStore(user._id);
 		res.status(200).json({
 			msg: 'ok',
 			store,
@@ -116,7 +116,7 @@ export const deleteStoreController = async (
 				401,
 			);
 
-		await deleteStore(user.id);
+		await deleteStore(user._id);
 		res.status(200).json({
 			msg: 'ok',
 		});
