@@ -7,12 +7,7 @@ import {
 	localRegisterUser,
 } from './service';
 import config from '@/config';
-import { getKakaoToken, getKakaoUser } from '@/utils/kakao';
-import {
-	generateAccessToken,
-	generateRefreshToken,
-	IPayload,
-} from '@/utils/jwt';
+
 const { KAKAO_REST_API_KEY, KAKAO_REDIRECT_URI, FRONT_BASE_URL } = config;
 
 // 회원가입
