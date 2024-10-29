@@ -143,18 +143,8 @@ export const kakaoCallbackController = async (
 ) => {
 	try {
 		const code = req.query.code as string;
-		const token = await getKakaoToken(code);
-		const userData = await getKakaoUser(token);
 
-		const user = await kakaoLogin(userData);
-
-		const payload: IPayload = {
-			_id: user.id,
-			nickname: user.nickname,
-		};
-
-		const accessToken = generateAccessToken(payload);
-		const refreshToken = generateRefreshToken(payload);
+		const { accessToken, refreshToken } = await kakaoLogin(code);
 
 		sendCookie(res, 'accessToken', accessToken, 1);
 		sendCookie(res, 'refreshToken', refreshToken, 24);

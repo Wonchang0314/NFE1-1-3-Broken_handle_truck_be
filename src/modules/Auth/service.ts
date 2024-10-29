@@ -7,7 +7,7 @@ import {
 	IPayload,
 } from '@/utils/jwt';
 import mongoose from 'mongoose';
-import { IUserData } from '@/utils/kakao';
+import { getKakaoToken, getKakaoUser, IUserData } from '@/utils/kakao';
 
 // 회원가입 로직
 export const localRegisterUser = async (
@@ -105,7 +105,10 @@ export const deleteUser = async (userId: string) => {
 	}
 };
 
-export const kakaoLogin = async (userData: IUserData) => {
+export const kakaoLogin = async (code: string) => {
+	const token = await getKakaoToken(code);
+	const userData: IUserData = await getKakaoUser(token);
+
 	let user = await User.findOne({ oAuthIdKey: userData.id, oAuth: 'Kakao' });
 
 	if (!user) {
@@ -116,5 +119,13 @@ export const kakaoLogin = async (userData: IUserData) => {
 		user = await newUser.save();
 	}
 
-	return user;
+	const payload: IPayload = {
+		_id: user.id,
+		nickname: user.nickname,
+	};
+
+	const accessToken = generateAccessToken(payload);
+	const refreshToken = generateRefreshToken(payload);
+
+	return { accessToken, refreshToken };
 };
