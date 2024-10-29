@@ -7,7 +7,7 @@ import {
 	IPayload,
 } from '@/utils/jwt';
 import mongoose from 'mongoose';
-import { getKakaoToken, getKakaoUser, IUserData } from '@/utils/kakao';
+import { IUserData } from '@/utils/kakao';
 
 // 회원가입 로직
 export const localRegisterUser = async (
