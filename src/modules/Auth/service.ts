@@ -105,18 +105,18 @@ export const deleteUser = async (userId: string) => {
 	}
 };
 
-export const kakaoLogin = async (code: string) => {
-	const token = await getKakaoToken(code);
-	const userData: IUserData = await getKakaoUser(token);
-
+export const kakaoLogin = async (userData: IUserData) => {
 	let user = await User.findOne({ oAuthIdKey: userData.id, oAuth: 'Kakao' });
 
 	if (!user) {
+		console.log(userData);
+
 		const newUser = new User({
 			oAuth: 'Kakao',
 			oAuthIdKey: userData.id,
 			nickname: userData.kakao_account.profile.nickname,
 		});
+
 		user = await newUser.save();
 	}
 

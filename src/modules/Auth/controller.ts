@@ -7,6 +7,7 @@ import {
 	localRegisterUser,
 } from './service';
 import config from '@/config';
+import { getKakaoToken, getKakaoUser } from '@/utils/kakao';
 
 const { KAKAO_REST_API_KEY, KAKAO_REDIRECT_URI, FRONT_BASE_URL } = config;
 
@@ -142,7 +143,14 @@ export const kakaoCallbackController = async (
 	try {
 		const code = req.query.code as string;
 
-		const { accessToken, refreshToken } = await kakaoLogin(code);
+		const token = await getKakaoToken(code);
+		if (!token) throw new AppError('카카오 인증 토큰 발급에 실패했습니다', 500);
+
+		const userData = await getKakaoUser(token);
+		if (!userData)
+			throw new AppError('카카오 사용자 데이터 수신에 실패했습니다', 500);
+
+		const { accessToken, refreshToken } = await kakaoLogin(userData);
 
 		sendCookie(res, 'accessToken', accessToken, 1);
 		sendCookie(res, 'refreshToken', refreshToken, 24);
