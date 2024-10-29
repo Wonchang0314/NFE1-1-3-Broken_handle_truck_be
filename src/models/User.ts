@@ -1,14 +1,17 @@
 import { AppError } from '@/utils';
 import bcrypt from 'bcrypt';
 import moment from 'moment';
-import { Document, model, Schema } from 'mongoose';
+import { Document, model, Schema, Types } from 'mongoose';
 
 export interface IUser extends Document {
 	email: string;
+	nickname: string;
 	password: string;
 	createdAt: string;
 	oAuth?: string;
 	oAuthIdKey?: string;
+	role: 'user' | 'owner';
+	bookMarks: Types.ObjectId[];
 }
 
 const userSchema = new Schema({
@@ -40,6 +43,19 @@ const userSchema = new Schema({
 		type: String,
 		unique: true,
 		sparse: true,
+	},
+	nickname: {
+		type: String,
+		required: true,
+	},
+	role: {
+		type: String,
+		enum: ['user', 'owner'],
+		default: 'user',
+	},
+	bookMarks: {
+		type: Types.ObjectId,
+		ref: 'Store',
 	},
 });
 
