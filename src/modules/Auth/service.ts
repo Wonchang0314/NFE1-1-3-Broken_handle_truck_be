@@ -105,6 +105,7 @@ export const deleteUser = async (userId: string) => {
 	}
 };
 
+// 카카오 로그인 로직
 export const kakaoLogin = async (userData: IUserData) => {
 	let user = await User.findOne({ oAuthIdKey: userData.id, oAuth: 'Kakao' });
 
