@@ -92,8 +92,11 @@ export const logout = async (
 			msg: 'ok',
 		});
 	} catch (e) {
-		const customError = new AppError('로그아웃에 실패 했습니다.', 500);
-		next(customError);
+		if (e instanceof AppError) {
+			next(e);
+		} else {
+			next(new AppError('로그아웃에 실패 했습니다.', 500));
+		}
 	}
 };
 
