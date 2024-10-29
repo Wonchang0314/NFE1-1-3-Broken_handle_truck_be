@@ -109,8 +109,6 @@ export const kakaoLogin = async (userData: IUserData) => {
 	let user = await User.findOne({ oAuthIdKey: userData.id, oAuth: 'Kakao' });
 
 	if (!user) {
-		console.log(userData);
-
 		const newUser = new User({
 			oAuth: 'Kakao',
 			oAuthIdKey: userData.id,
@@ -118,6 +116,7 @@ export const kakaoLogin = async (userData: IUserData) => {
 		});
 
 		user = await newUser.save();
+		if (!user) throw new AppError('카카오 사용자 등록에 실패했습니다.', 500);
 	}
 
 	const payload: IPayload = {
