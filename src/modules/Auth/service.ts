@@ -115,6 +115,7 @@ export const kakaoLogin = async (code: string) => {
 		const newUser = new User({
 			oAuth: 'Kakao',
 			oAuthIdKey: userData.id,
+			nickname: userData.kakao_account.profile.nickname,
 		});
 		user = await newUser.save();
 	}

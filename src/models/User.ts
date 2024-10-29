@@ -1,7 +1,7 @@
 import { AppError } from '@/utils';
 import bcrypt from 'bcrypt';
 import moment from 'moment';
-import { Document, model, Schema, Types } from 'mongoose';
+import { Document, model, Schema } from 'mongoose';
 
 export interface IUser extends Document {
 	email: string;
