@@ -5,6 +5,7 @@ export const getComments = async (storeId: string) => {
 	return await Comment.find({ storeId }).populate('authorId', [
 		'_id',
 		'nickname',
+		'createdAt',
 	]);
 };
 
@@ -21,6 +22,7 @@ export const postComment = async (
 	const comment = (await newComment.save()).populate('authorId', [
 		'_id',
 		'nickname',
+		'createdAt',
 	]);
 
 	return comment;
