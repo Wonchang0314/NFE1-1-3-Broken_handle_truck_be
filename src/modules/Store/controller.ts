@@ -53,14 +53,14 @@ export const postStoreController = async (
 				401,
 			);
 
-		if (!coordinates || !category || !paymentMethod)
+		if (!coordinates || !category || !paymentMethod || !name)
 			throw new AppError('가게 등록을 위한 정보가 누락된 요청입니다.', 400);
 
 		const newStore: IStore = {
 			name,
 			ownerId: new Types.ObjectId(user._id),
 			coordinates: coordinates,
-			isOpen: isOpen,
+			isOpen: isOpen ? true : false,
 			category: category,
 			paymentMethod: paymentMethod,
 			createdAt: moment().format('YYYY-MM-DD HH:mm'),
