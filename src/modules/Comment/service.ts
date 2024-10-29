@@ -1,10 +1,11 @@
 import { Comment } from '@/models';
-import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
 import { AppError } from '@/utils';
 
 export const getComments = async (storeId: string) => {
-	return await Comment.find({ storeId }).select('-password');
+	return await Comment.find({ storeId }).populate('authorId', [
+		'_id',
+		'nickname',
+	]);
 };
 
 export const postComment = async (
@@ -17,10 +18,10 @@ export const postComment = async (
 		content,
 		authorId,
 	});
-	const comment = (await newComment.save()).populate(
-		'authorId',
-		'_id, nickname',
-	);
+	const comment = (await newComment.save()).populate('authorId', [
+		'_id',
+		'nickname',
+	]);
 
 	return comment;
 };
