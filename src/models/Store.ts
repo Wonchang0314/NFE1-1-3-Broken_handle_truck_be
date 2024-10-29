@@ -9,7 +9,7 @@ export interface IStore {
 	category: string;
 	paymentMethod: ('현금' | '카드' | '계좌이체')[];
 	createdAt: string;
-	updatedAt?: string;
+	updatedAt: string;
 }
 
 const storeSchema = new Schema({
@@ -26,4 +26,5 @@ const storeSchema = new Schema({
 storeSchema.index({ coordinates: '2dsphere' });
 
 const Store = mongoose.model<IStore & mongoose.Document>('Store', storeSchema);
+
 export default Store;

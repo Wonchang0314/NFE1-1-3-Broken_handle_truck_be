@@ -11,7 +11,6 @@ export interface IUser extends Document {
 	oAuth?: string;
 	oAuthIdKey?: string;
 	role: 'user' | 'owner';
-	bookMarks: Types.ObjectId[];
 }
 
 const userSchema = new Schema({
@@ -52,10 +51,6 @@ const userSchema = new Schema({
 		type: String,
 		enum: ['user', 'owner'],
 		default: 'user',
-	},
-	bookMarks: {
-		type: Types.ObjectId,
-		ref: 'Store',
 	},
 });
 
