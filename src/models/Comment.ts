@@ -5,7 +5,6 @@ export interface IComment extends Document {
 	authorId: Types.ObjectId;
 	storeId: Types.ObjectId;
 	content: string;
-	password: string;
 	createdAt: string;
 }
 
@@ -21,7 +20,6 @@ const commentSchema = new Schema({
 		required: true,
 	},
 	content: { type: String, required: true },
-	password: { type: String, required: true },
 	createdAt: {
 		type: String,
 		default: () => moment().format('YYYY-MM-DD HH:mm'),
