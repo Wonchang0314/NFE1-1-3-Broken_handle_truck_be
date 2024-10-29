@@ -2,6 +2,7 @@ import { AppError, sendCookie } from '@/utils';
 import {
 	generateAccessToken,
 	generateRefreshToken,
+	IPayload,
 	verifyAccessToken,
 	verifyRefreshToken,
 } from '@/utils/jwt';
@@ -18,8 +19,8 @@ const authHandler = async (req: Request, res: Response, next: NextFunction) => {
 
 		// 2. 액세스 토큰 검증
 		try {
-			const decoded = verifyAccessToken(accessToken);
-			req.user = decoded as { id: string };
+			const decoded = verifyAccessToken(accessToken) as IPayload;
+			req.user = decoded;
 
 			return next();
 		} catch (e) {
@@ -51,12 +52,12 @@ const refreshTokenHandler = (
 		}
 
 		// 1. 리프레시 토큰 검증
-		const decoded = verifyRefreshToken(refreshToken) as { id: string };
+		const decoded = verifyRefreshToken(refreshToken) as IPayload;
 		req.user = decoded;
 
 		// 2. 새로운 토큰 발급
-		const newAccessToken = generateAccessToken({ id: decoded.id });
-		const newRefreshToken = generateRefreshToken({ id: decoded.id });
+		const newAccessToken = generateAccessToken(decoded);
+		const newRefreshToken = generateRefreshToken(decoded);
 
 		// 3. 새로운 토큰을 쿠키에 설정
 		sendCookie(res, 'accessToken', newAccessToken, 1);

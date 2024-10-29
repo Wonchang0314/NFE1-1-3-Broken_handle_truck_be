@@ -5,10 +5,12 @@ import { Document, model, Schema } from 'mongoose';
 
 export interface IUser extends Document {
 	email: string;
+	nickname: string;
 	password: string;
 	createdAt: string;
 	oAuth?: string;
 	oAuthIdKey?: string;
+	role: 'user' | 'owner';
 }
 
 const userSchema = new Schema({
@@ -40,6 +42,15 @@ const userSchema = new Schema({
 		type: String,
 		unique: true,
 		sparse: true,
+	},
+	nickname: {
+		type: String,
+		required: true,
+	},
+	role: {
+		type: String,
+		enum: ['user', 'owner'],
+		default: 'user',
 	},
 });
 
