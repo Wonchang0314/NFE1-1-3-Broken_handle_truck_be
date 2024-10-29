@@ -14,7 +14,7 @@ export interface IPayload {
 /**
  * Access Token 생성 함수
  */
-export const generateAccessToken = (payload: object): string => {
+export const generateAccessToken = (payload: IPayload): string => {
 	try {
 		return jwt.sign(payload, JWT_ACCESS_SECRET as string, { expiresIn: '1h' });
 	} catch (e) {
@@ -25,7 +25,7 @@ export const generateAccessToken = (payload: object): string => {
 /**
  * Refresh Token 생성 함수
  */
-export const generateRefreshToken = (payload: object): string => {
+export const generateRefreshToken = (payload: IPayload): string => {
 	try {
 		return jwt.sign(payload, JWT_REFRESH_SECRET as string, { expiresIn: '1d' });
 	} catch (e) {
