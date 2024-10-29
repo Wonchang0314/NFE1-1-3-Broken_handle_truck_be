@@ -78,8 +78,9 @@ export const getStore = async (ownerId: string) => {
 	const store = await Store.findOne({ ownerId });
 
 	if (store) {
-		const comments = await Comment.find({ storeId: store.id }).select(
-			'-password',
+		const comments = await Comment.find({ storeId: store.id }).populate(
+			'authorId',
+			['_id', 'nickname'],
 		);
 
 		return { store, comments };
