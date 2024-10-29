@@ -28,12 +28,20 @@ export const postCommentController = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { content, password, storeId } = req.body;
-		if (!content || !storeId || !password) {
+		const user = req.user;
+		const { content, storeId } = req.body;
+
+		if (!user)
+			throw new AppError(
+				'사용자 인증 정보가 없습니다. 잘못된 접근입니다.',
+				401,
+			);
+
+		if (!content || !storeId) {
 			throw new AppError('댓글 생성을 위해 필요한 값이 누락되었습니다', 400);
 		}
 
-		const comment = await postComment(content, password, storeId);
+		const comment = await postComment(content, storeId, user._id);
 		res.status(201).json({
 			msg: 'ok',
 			comment,

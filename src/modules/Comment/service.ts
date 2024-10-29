@@ -9,15 +9,18 @@ export const getComments = async (storeId: string) => {
 
 export const postComment = async (
 	content: string,
-	password: string,
-	storeId: mongoose.Types.ObjectId,
+	storeId: string,
+	authorId: string,
 ) => {
 	const newComment = new Comment({
 		storeId,
-		password,
 		content,
+		authorId,
 	});
-	const comment = await newComment.save();
+	const comment = (await newComment.save()).populate(
+		'authorId',
+		'_id, nickname',
+	);
 
 	return comment;
 };
