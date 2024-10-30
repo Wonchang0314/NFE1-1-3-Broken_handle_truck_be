@@ -60,3 +60,9 @@ export const postNotification = async (
 
 	return savedNotification;
 };
+
+export const getNotification = async (storeId: string) => {
+	const senderId = new Types.ObjectId(storeId);
+	const notifications = await Notification.find({ sender: senderId });
+	return notifications;
+};
