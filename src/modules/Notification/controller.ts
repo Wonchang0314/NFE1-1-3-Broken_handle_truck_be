@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { postNotification, getNotification } from './service';
 import { AppError } from '@/utils';
-import { Store } from '@/models';
 
 export const postNotificationController = async (
 	req: Request,

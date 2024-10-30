@@ -108,6 +108,10 @@ export const deleteStore = async (ownerId: string) => {
 
 		await Store.findByIdAndDelete(store.id).session(session);
 
+		await User.findByIdAndUpdate(ownerId, {
+			$set: { role: 'user' },
+		}).session(session);
+
 		await session.commitTransaction();
 	} catch (e) {
 		await session.abortTransaction();
