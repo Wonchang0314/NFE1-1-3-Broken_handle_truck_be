@@ -60,3 +60,12 @@ export const postNotification = async (
 
 	return savedNotification;
 };
+
+export const getNotification = async (
+	userId: string,
+): Promise<INotification[]> => {
+	const notifications = await Notification.find({
+		recipients: userId,
+	});
+	return notifications;
+};

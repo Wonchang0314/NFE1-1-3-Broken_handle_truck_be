@@ -1,8 +1,16 @@
 import { Router } from 'express';
-import { postNotificationController } from './controller';
+import {
+	postNotificationController,
+	getNotificationController,
+} from './controller';
+import authHandler from '@/middlewares/authHandler';
 
 const notificationRouter = Router();
 
-notificationRouter.route('/').post(postNotificationController);
+notificationRouter
+	.route('/')
+	.all(authHandler)
+	.get(getNotificationController)
+	.post(postNotificationController);
 
 export default notificationRouter;
