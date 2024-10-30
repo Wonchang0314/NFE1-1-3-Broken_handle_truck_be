@@ -1,6 +1,7 @@
 import { AppError, clearCookie, sendCookie } from '@/utils';
 import { NextFunction, Request, Response } from 'express';
 import {
+	checkEmail,
 	deleteUser,
 	kakaoLogin,
 	localLoginUser,
@@ -39,6 +40,28 @@ export const localRegister = async (
 		res.status(200).json({
 			msg: 'ok',
 			user,
+		});
+	} catch (e) {
+		next(e);
+	}
+};
+
+// 이메일 중복체크
+export const checkEmailController = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const { email } = req.query;
+
+		if (!email) throw new AppError('이메일 필드는 필수 요소 입니다.', 400);
+
+		const useAble = await checkEmail(email as string);
+
+		res.status(200).json({
+			msg: 'ok',
+			useAble,
 		});
 	} catch (e) {
 		next(e);

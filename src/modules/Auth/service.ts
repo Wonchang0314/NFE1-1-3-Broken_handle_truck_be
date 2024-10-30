@@ -44,6 +44,13 @@ export const localRegisterUser = async (
 	};
 };
 
+// 이메일 중복확인 로직
+export const checkEmail = async (email: string) => {
+	const user = await User.findOne({ email });
+
+	return !user;
+};
+
 // 로그인 로직
 export const localLoginUser = async (email: string, password: string) => {
 	// 1. 사용자 조회

@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+	checkEmailController,
 	deleteUserController,
 	kakaoCallbackController,
 	kakaoLoginController,
@@ -11,9 +12,13 @@ import { authHandler } from '@/middlewares';
 
 const authRouter = Router();
 
-// @route	POST /api/auth/login
+// @route	POST /api/auth/register
 // @desc	회원가입
 authRouter.route('/register').post(localRegister);
+
+// @route GET /api/auth/check-email
+// @desc	이메일 중복확인
+authRouter.route('/check-email').get(checkEmailController);
 
 // @route	POST /api/auth/login
 // @desc	로그인
