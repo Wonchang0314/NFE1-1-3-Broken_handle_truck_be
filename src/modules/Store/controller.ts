@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import moment from 'moment';
 import {
 	deleteStore,
 	getStore,
@@ -66,7 +65,7 @@ export const postStoreController = async (
 		};
 
 		const { store, comments } = await postStore(data);
-		console.log(comments);
+
 		res.status(200).json({
 			msg: 'ok',
 			store,

@@ -2,7 +2,6 @@ import { IStore } from '@/models/Store';
 import { Store, Comment, User } from '@/models';
 import { AppError } from '@/utils';
 import mongoose from 'mongoose';
-import moment from 'moment';
 
 interface IQueries {
 	coordinates: {
@@ -120,7 +119,10 @@ export const getStoreById = async (storeId: string) => {
 	const store = await Store.findById(storeId);
 	if (!store) throw new AppError('Store가 존재하지 않습니다.', 404);
 
-	const comments = await Comment.find({ storeId }).select('-password');
+	const comments = await Comment.find({ storeId: store.id }).populate(
+		'authorId',
+		['_id', 'nickname'],
+	);
 
 	return { store, comments };
 };
