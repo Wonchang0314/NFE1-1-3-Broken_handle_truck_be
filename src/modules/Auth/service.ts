@@ -7,7 +7,7 @@ import {
 	IPayload,
 } from '@/utils/jwt';
 import mongoose from 'mongoose';
-import { getKakaoToken, getKakaoUser, IUserData } from '@/utils/kakao';
+import { IUserData } from '@/utils/kakao';
 
 // 회원가입 로직
 export const localRegisterUser = async (
@@ -30,6 +30,7 @@ export const localRegisterUser = async (
 	const payload: IPayload = {
 		_id: user.id,
 		nickname: user.nickname,
+		role: user.role,
 	};
 
 	// 3. 토큰 생성
@@ -39,8 +40,15 @@ export const localRegisterUser = async (
 	return {
 		accessToken,
 		refreshToken,
-		user: { _id: user.id, nickname: user.nickname },
+		user: { _id: user.id, nickname: user.nickname, role: user.role },
 	};
+};
+
+// 이메일 중복확인 로직
+export const checkEmail = async (email: string) => {
+	const user = await User.findOne({ email });
+
+	return !user;
 };
 
 // 로그인 로직
@@ -56,6 +64,7 @@ export const localLoginUser = async (email: string, password: string) => {
 	const payload: IPayload = {
 		_id: user.id,
 		nickname: user.nickname,
+		role: user.role,
 	};
 
 	// 3. 토큰 생성
@@ -65,7 +74,7 @@ export const localLoginUser = async (email: string, password: string) => {
 	return {
 		accessToken,
 		refreshToken,
-		user: { _id: user.id, nickname: user.nickname },
+		user: { _id: user.id, nickname: user.nickname, role: user.role },
 	};
 };
 
@@ -105,6 +114,7 @@ export const deleteUser = async (userId: string) => {
 	}
 };
 
+// 카카오 로그인 로직
 export const kakaoLogin = async (userData: IUserData) => {
 	let user = await User.findOne({ oAuthIdKey: userData.id, oAuth: 'Kakao' });
 
@@ -122,6 +132,7 @@ export const kakaoLogin = async (userData: IUserData) => {
 	const payload: IPayload = {
 		_id: user.id,
 		nickname: user.nickname,
+		role: user.role,
 	};
 
 	const accessToken = generateAccessToken(payload);

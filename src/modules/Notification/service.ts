@@ -2,12 +2,14 @@ import { Types } from 'mongoose';
 import Notification, { INotification } from '@/models/Notification';
 import wss from '../webSocketServer';
 import { Store } from '@/models';
+import Bookmark from '@/models/Bookmark';
 
 const getBookmarkedUserIds = async (
 	storeId: Types.ObjectId,
 ): Promise<string[]> => {
-	// 더미 UUID 리스트 반환
-	return ['user-uuid-1', 'user-uuid-2', 'user-uuid-3'];
+	const bookmark = await Bookmark.find({ storeId }).select('userId');
+
+	return bookmark.map((bookmark) => String(bookmark.userId));
 };
 
 export const postNotification = async (

@@ -20,7 +20,12 @@ const authHandler = async (req: Request, res: Response, next: NextFunction) => {
 		// 2. 액세스 토큰 검증
 		try {
 			const decoded = verifyAccessToken(accessToken) as IPayload;
-			req.user = decoded;
+
+			req.user = {
+				_id: decoded._id,
+				nickname: decoded.nickname,
+				role: decoded.role,
+			};
 
 			return next();
 		} catch (e) {
@@ -53,11 +58,16 @@ const refreshTokenHandler = (
 
 		// 1. 리프레시 토큰 검증
 		const decoded = verifyRefreshToken(refreshToken) as IPayload;
-		req.user = decoded;
+
+		req.user = {
+			_id: decoded._id,
+			nickname: decoded.nickname,
+			role: decoded.role,
+		};
 
 		// 2. 새로운 토큰 발급
-		const newAccessToken = generateAccessToken(decoded);
-		const newRefreshToken = generateRefreshToken(decoded);
+		const newAccessToken = generateAccessToken(req.user);
+		const newRefreshToken = generateRefreshToken(req.user);
 
 		// 3. 새로운 토큰을 쿠키에 설정
 		sendCookie(res, 'accessToken', newAccessToken, 1);

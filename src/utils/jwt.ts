@@ -7,6 +7,7 @@ const { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } = config;
 export interface IPayload {
 	_id: string;
 	nickname: string;
+	role: 'user' | 'owner';
 }
 
 /**

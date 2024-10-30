@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import moment from 'moment';
 import {
 	deleteStore,
 	getStore,
@@ -53,24 +52,24 @@ export const postStoreController = async (
 				401,
 			);
 
-		if (!coordinates || !category || !paymentMethod)
+		if (!coordinates || !category || !paymentMethod || !name)
 			throw new AppError('가게 등록을 위한 정보가 누락된 요청입니다.', 400);
 
-		const newStore: IStore = {
+		const data: IStore = {
 			name,
 			ownerId: new Types.ObjectId(user._id),
-			coordinates: coordinates,
-			isOpen: isOpen,
-			category: category,
-			paymentMethod: paymentMethod,
-			createdAt: moment().format('YYYY-MM-DD HH:mm'),
-			updatedAt: moment().format('YYYY-MM-DD HH:mm'),
+			coordinates,
+			isOpen: isOpen ? true : false,
+			category,
+			paymentMethod,
 		};
 
-		const store = await postStore(newStore);
+		const { store, comments } = await postStore(data);
+
 		res.status(200).json({
 			msg: 'ok',
 			store,
+			comments,
 		});
 	} catch (error) {
 		next(error);
