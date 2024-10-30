@@ -58,7 +58,7 @@ export const deleteCommentController = async (
 ) => {
 	try {
 		const user = req.user;
-		const { commentId } = req.body;
+		const { commentId } = req.params;
 
 		if (!user)
 			throw new AppError(

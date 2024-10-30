@@ -12,7 +12,10 @@ commentRouter
 	.route('/')
 	.get(getCommentController)
 	.all(authHandler)
-	.post(postCommentController)
+	.post(postCommentController);
+commentRouter
+	.route('/:commentId([0-9a-f]{24})')
+	.all(authHandler)
 	.delete(deleteCommentController);
 
 export default commentRouter;
