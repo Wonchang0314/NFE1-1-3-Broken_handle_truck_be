@@ -7,6 +7,8 @@ import config from '@/config';
 import mongoose from 'mongoose';
 import apiRouter from '@/modules';
 import { errorHandler, notFoundHandler } from '@/middlewares';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from '@/swagger/swaggerOption';
 
 const { FRONT_BASE_URL, MONGO_DB_URI } = config;
 
@@ -35,6 +37,9 @@ mongoose
 		console.log('DB connected✅');
 	})
 	.catch((e) => console.error(e));
+
+// Swagger UI 경로 설정
+App.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes 연결
 App.use('/api', apiRouter);
