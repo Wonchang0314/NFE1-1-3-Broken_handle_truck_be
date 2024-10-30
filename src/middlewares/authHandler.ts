@@ -24,6 +24,7 @@ const authHandler = async (req: Request, res: Response, next: NextFunction) => {
 			req.user = {
 				_id: decoded._id,
 				nickname: decoded.nickname,
+				role: decoded.role,
 			};
 
 			return next();
@@ -61,6 +62,7 @@ const refreshTokenHandler = (
 		req.user = {
 			_id: decoded._id,
 			nickname: decoded.nickname,
+			role: decoded.role,
 		};
 
 		// 2. 새로운 토큰 발급
