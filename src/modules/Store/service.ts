@@ -2,6 +2,8 @@ import { IStore } from '@/models/Store';
 import { Store, Comment, User } from '@/models';
 import { AppError } from '@/utils';
 import mongoose from 'mongoose';
+import Bookmark from '@/models/Bookmark';
+import Notification from '@/models/Notification';
 
 interface IQueries {
 	coordinates: {
@@ -96,6 +98,14 @@ export const deleteStore = async (ownerId: string) => {
 		await Comment.deleteMany({
 			storeId: store.id,
 		}).session(session);
+
+		await Bookmark.deleteMany({
+			storeId: store.id,
+		}).session(session);
+
+		// 확장성 고려 DeleteMany 사용
+		await Notification.deleteMany({ sender: store.id }).session(session);
+
 		await Store.findByIdAndDelete(store.id).session(session);
 
 		await session.commitTransaction();

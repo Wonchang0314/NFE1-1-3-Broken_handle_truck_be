@@ -8,6 +8,8 @@ import {
 } from '@/utils/jwt';
 import mongoose from 'mongoose';
 import { IUserData } from '@/utils/kakao';
+import Bookmark from '@/models/Bookmark';
+import Notification from '@/models/Notification';
 
 // 회원가입 로직
 export const localRegisterUser = async (
@@ -92,10 +94,24 @@ export const deleteUser = async (userId: string) => {
 		const store = await Store.findOne({ ownerId: userId }).session(session);
 		if (store) {
 			await Comment.deleteMany({ storeId: store.id }).session(session);
+			// 확장성 고려 deleteMany 사용
+			await Notification.deleteMany({ sender: store.id }).session(session);
 			await Store.findByIdAndDelete(store.id).session(session);
 		}
 
-		// 3. 사용자 삭제
+		// 3. 관련 Bookmark 삭제
+		await Bookmark.deleteMany({ userId }).session(session);
+
+		// 4. 관련 Notification에서 사용자 ID 삭제
+		await Notification.updateMany(
+			{ recipients: userId },
+			{ $pull: { recipients: userId } },
+		).session(session);
+
+		// 5. 관련 Comments 삭제
+		await Comment.deleteMany({ authorId: userId }).session(session);
+
+		// 6. 사용자 삭제
 		await User.findByIdAndDelete(user.id).session(session);
 
 		await session.commitTransaction();
