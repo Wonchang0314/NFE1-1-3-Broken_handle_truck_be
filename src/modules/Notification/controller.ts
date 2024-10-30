@@ -33,11 +33,14 @@ export const getNotificationController = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { storeId } = req.query;
-		if (!storeId) {
-			throw new AppError('알림 조회를 위한 가게 ID값이 누락되었습니다', 400);
+		const user = req.user;
+		if (!user) {
+			throw new AppError(
+				'사용자 인증 정보가 없습니다. 잘못된 접근입니다.',
+				401,
+			);
 		}
-		const notification = await getNotification(storeId as string);
+		const notification = await getNotification(user._id);
 		res.status(200).json({
 			msg: 'ok',
 			notification,

@@ -61,8 +61,15 @@ export const postNotification = async (
 	return savedNotification;
 };
 
-export const getNotification = async (storeId: string) => {
-	const senderId = new Types.ObjectId(storeId);
-	const notifications = await Notification.find({ sender: senderId });
+export const getNotification = async (userId: string) => {
+	const bookmark = await Bookmark.findOne({
+		userId: new Types.ObjectId(userId),
+	}).select('storeId');
+	if (!bookmark) {
+		return [];
+	}
+	const storeId = bookmark.storeId;
+
+	const notifications = await Notification.find({ sender: storeId });
 	return notifications;
 };
