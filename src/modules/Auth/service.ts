@@ -94,7 +94,8 @@ export const deleteUser = async (userId: string) => {
 		const store = await Store.findOne({ ownerId: userId }).session(session);
 		if (store) {
 			await Comment.deleteMany({ storeId: store.id }).session(session);
-			await Notification.deleteOne({ sender: store.id }).session(session);
+			// 확장성 고려 deleteMany 사용
+			await Notification.deleteMany({ sender: store.id }).session(session);
 			await Store.findByIdAndDelete(store.id).session(session);
 		}
 
