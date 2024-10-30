@@ -57,11 +57,11 @@ export const checkEmailController = async (
 
 		if (!email) throw new AppError('이메일 필드는 필수 요소 입니다.', 400);
 
-		const useAble = await checkEmail(email as string);
+		const isAble = await checkEmail(email as string);
 
 		res.status(200).json({
 			msg: 'ok',
-			useAble,
+			isAble,
 		});
 	} catch (e) {
 		next(e);
