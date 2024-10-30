@@ -1,7 +1,8 @@
 import { IStore } from '@/models/Store';
-import { Store, Comment } from '@/models';
+import { Store, Comment, User } from '@/models';
 import { AppError } from '@/utils';
 import mongoose from 'mongoose';
+import moment from 'moment';
 
 interface IQueries {
 	coordinates: {
@@ -45,33 +46,29 @@ export const getStores = async (
 	return stores;
 };
 
-export const postStore = async (newStore: IStore) => {
-	const updatedStore = await Store.findOneAndUpdate(
-		{
-			ownerId: newStore.ownerId, // ownerId 같으면 교체
-		},
-		{
-			$set: {
-				name: newStore.name,
-				coordinates: newStore.coordinates,
-				isOpen: newStore.isOpen,
-				category: newStore.category,
-				paymentMethod: newStore.paymentMethod,
-				updatedAt: newStore.updatedAt,
-			},
-			$setOnInsert: {
-				createdAt: newStore.createdAt,
-			},
-		},
-		{
-			upsert: true, // 없으면 업데이트
-			new: true,
-		},
+export const postStore = async (data: IStore) => {
+	let store = await Store.findOne({ ownerId: data.ownerId });
+
+	if (!store) {
+		const newStore = new Store(data);
+		store = await newStore.save();
+
+		const user = await User.findByIdAndUpdate(data.ownerId, { role: 'owner' });
+
+		if (!user)
+			throw new AppError('스토어 등록시 사용자 정보를 찾을 수 없습니다.', 404);
+	} else {
+		store = await Store.findByIdAndUpdate(store._id, { new: true });
+	}
+
+	if (!store) throw new AppError('스토어 등록에 실패했습니다.', 500);
+
+	const comments = await Comment.find({ storeId: store.id }).populate(
+		'authorId',
+		['_id', 'nickname'],
 	);
 
-	if (!updatedStore) throw new AppError('Store 등록에 실패했습니다', 500);
-
-	return updatedStore;
+	return { store, comments };
 };
 
 export const getStore = async (ownerId: string) => {
@@ -86,7 +83,7 @@ export const getStore = async (ownerId: string) => {
 		return { store, comments };
 	}
 
-	return { store, comments: null };
+	return { store, comments: [] };
 };
 
 export const deleteStore = async (ownerId: string) => {

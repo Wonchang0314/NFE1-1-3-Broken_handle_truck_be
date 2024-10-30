@@ -5,11 +5,11 @@ export interface IStore {
 	name: string;
 	ownerId: Types.ObjectId;
 	coordinates: number[];
-	isOpen: boolean;
+	isOpen?: boolean;
 	category: string;
 	paymentMethod: ('현금' | '카드' | '계좌이체')[];
-	createdAt: string;
-	updatedAt: string;
+	createdAt?: string;
+	updatedAt?: string;
 }
 
 const storeSchema = new Schema({
@@ -19,9 +19,23 @@ const storeSchema = new Schema({
 	isOpen: { type: Boolean, default: false },
 	category: { type: String, required: true },
 	paymentMethod: [{ type: String, enum: ['현금', '카드', '계좌이체'] }],
-	createdAt: { type: String, deafult: moment().format('YYYY-MM-DD HH:mm') },
-	updatedAt: { type: String, default: moment().format('YYYY-MM-DD HH:mm') },
+	createdAt: {
+		type: String,
+		default: () => moment().format('YYYY-MM-DD HH:mm'),
+	},
+	updatedAt: {
+		type: String,
+		default: () => moment().format('YYYY-MM-DD HH:mm'),
+	},
 });
+
+storeSchema.pre(
+	['findOneAndUpdate', 'updateOne', 'updateMany'],
+	function (next) {
+		this.set({ updatedAt: moment().format('YYYY-MM-DD HH:mm') });
+		next();
+	},
+);
 
 storeSchema.index({ coordinates: '2dsphere' });
 

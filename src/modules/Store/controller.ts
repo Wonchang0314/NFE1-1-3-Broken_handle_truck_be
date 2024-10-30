@@ -56,21 +56,21 @@ export const postStoreController = async (
 		if (!coordinates || !category || !paymentMethod || !name)
 			throw new AppError('가게 등록을 위한 정보가 누락된 요청입니다.', 400);
 
-		const newStore: IStore = {
+		const data: IStore = {
 			name,
 			ownerId: new Types.ObjectId(user._id),
-			coordinates: coordinates,
+			coordinates,
 			isOpen: isOpen ? true : false,
-			category: category,
-			paymentMethod: paymentMethod,
-			createdAt: moment().format('YYYY-MM-DD HH:mm'),
-			updatedAt: moment().format('YYYY-MM-DD HH:mm'),
+			category,
+			paymentMethod,
 		};
 
-		const store = await postStore(newStore);
+		const { store, comments } = await postStore(data);
+		console.log(comments);
 		res.status(200).json({
 			msg: 'ok',
 			store,
+			comments,
 		});
 	} catch (error) {
 		next(error);
