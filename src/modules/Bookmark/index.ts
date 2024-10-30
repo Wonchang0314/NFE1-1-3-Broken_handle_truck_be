@@ -1,9 +1,16 @@
 import { authHandler } from '@/middlewares';
 import { Router } from 'express';
-import { postBookMarkController } from './controller';
+import {
+	getBookmarkByUserController,
+	postBookMarkController,
+} from './controller';
 
 const bookmarkRouter = Router();
 
-bookmarkRouter.route('/').all(authHandler).post(postBookMarkController);
+bookmarkRouter
+	.route('/')
+	.all(authHandler)
+	.get(getBookmarkByUserController)
+	.post(postBookMarkController);
 
 export default bookmarkRouter;
