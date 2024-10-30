@@ -36,7 +36,7 @@ export default bookmarkRouter;
  *                 description: 북마크할 스토어의 ID (필수)
  *                 example: "64b9c63f5f5d2a001d0c8b1a"
  *     responses:
- *       201:
+ *       200:
  *         description: 북마크 등록/취소 성공
  *         content:
  *           application/json:

@@ -37,7 +37,7 @@ export const localRegister = async (
 		sendCookie(res, 'accessToken', accessToken, 1);
 
 		// 4. 응답 전송
-		res.status(200).json({
+		res.status(201).json({
 			msg: 'ok',
 			user,
 		});
