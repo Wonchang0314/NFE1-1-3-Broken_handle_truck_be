@@ -17,10 +17,10 @@ export const postNotificationController = async (
 			);
 		}
 
-		const Notification = await postNotification(user._id);
+		const notifications = await postNotification(user._id);
 		res.status(201).json({
 			msg: 'ok',
-			Notification,
+			notifications,
 		});
 	} catch (error) {
 		next(error);

@@ -386,6 +386,10 @@ export default storeRouter;
  *                           type: string
  *                         description: 결제 수단
  *                         example: ["현금", "카드"]
+ *                       commentCount:
+ *                         type: number
+ *                         description: 댓글 수
+ *                         example: 12
  *                       createdAt:
  *                         type: string
  *                         description: 생성 일자
