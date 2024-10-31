@@ -16,7 +16,7 @@ const sendCookie = (
 ) => {
 	res.cookie(name, value, {
 		httpOnly: true,
-		secure: NODE_ENV === 'production',
+		secure: NODE_ENV === 'production' && false,
 		sameSite: NODE_ENV === 'production' ? 'none' : 'lax',
 		maxAge: maxAge * 60 * 60 * 1000,
 	});
