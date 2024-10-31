@@ -187,3 +187,27 @@ export const kakaoCallbackController = async (
 		}
 	}
 };
+
+// 로그인 확인
+export const AuthValidationController = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const user = req.user;
+
+		if (!user)
+			throw new AppError(
+				'사용자 인증 정보가 없습니다. 잘못된 접근입니다.',
+				401,
+			);
+
+		res.status(200).json({
+			msg: 'ok',
+			user,
+		});
+	} catch (e) {
+		next(e);
+	}
+};

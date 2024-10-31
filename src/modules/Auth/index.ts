@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+	AuthValidationController,
 	checkEmailController,
 	deleteUserController,
 	kakaoCallbackController,
@@ -11,6 +12,10 @@ import {
 import { authHandler } from '@/middlewares';
 
 const authRouter = Router();
+
+//@route	GET /api/auth/valid
+//@desc	로그인 상태 확인
+authRouter.route('/valid').all(authHandler).get(AuthValidationController);
 
 // @route	POST /api/auth/register
 // @desc	회원가입
@@ -40,6 +45,64 @@ authRouter.route('/kakao').get(kakaoLoginController);
 authRouter.route('/kakao/callback').get(kakaoCallbackController);
 
 export default authRouter;
+
+/**
+ * @swagger
+ * /auth/valid:
+ *   post:
+ *     tags: [Auth]
+ *     summary: 로그인 상태 확인
+ *     description: 설정된 쿠키 상태를 기반으로 로그인 가능 여부를 반환합니다.
+ *     responses:
+ *       200:
+ *         description: 성공
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: "ok"
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       description: 사용자 ID
+ *                       example: "64b9c63f5f5d2a001d0c8b1a"
+ *                     nickname:
+ *                       type: string
+ *                       description: 사용자 닉네임
+ *                       example: "user_nickname"
+ *                     role:
+ *                       type: string
+ *                       enum: ["user", "owner"]
+ *                       description: 사용자 권한
+ *                       example: "user"
+ *       401:
+ *         description: 인증 실패 (로그인 필요)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   description: 인증 실패 메시지
+ *                   example: "사용자 인증 정보가 없습니다. 잘못된 접근입니다."
+ *       500:
+ *         description: 서버 오류
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   description: 서버 오류 메시지
+ *                   example: "알 수 없는 서버 오류가 발생했습니다."
+ */
 
 /**
  * @swagger
