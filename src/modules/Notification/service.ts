@@ -34,14 +34,14 @@ export const postNotification = async (
 			recipients: bookmarkedUsers,
 			sender: store.id,
 			type: 'open',
-			content: `${store.category}가게가 영업을 시작했습니다`,
+			content: `${store.name} 가게가 영업을 시작했습니다`,
 		});
 	} else {
 		notification = new Notification({
 			recipients: bookmarkedUsers,
 			sender: store.id,
 			type: 'closed',
-			content: `${store.category}가게가 영업을 마감했습니다`,
+			content: `${store.name} 가게가 영업을 마감했습니다`,
 		});
 	}
 
