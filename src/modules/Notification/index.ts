@@ -2,6 +2,8 @@ import { Router } from 'express';
 import {
 	postNotificationController,
 	getNotificationController,
+	postAsReadController,
+	postAsReadAllController,
 } from './controller';
 import authHandler from '@/middlewares/authHandler';
 
@@ -12,6 +14,9 @@ notificationRouter
 	.all(authHandler)
 	.get(getNotificationController)
 	.post(postNotificationController);
+
+notificationRouter.post('/read', postAsReadController);
+notificationRouter.post('/readAll', postAsReadAllController);
 
 export default notificationRouter;
 
