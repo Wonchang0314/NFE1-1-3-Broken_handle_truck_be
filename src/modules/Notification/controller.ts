@@ -1,6 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
-import { postNotification, getNotification } from './service';
+import {
+	postNotification,
+	getNotification,
+	postAsRead,
+	postAsReadAll,
+} from './service';
 import { AppError } from '@/utils';
+import { Store } from '@/models';
 
 export const postNotificationController = async (
 	req: Request,
@@ -8,19 +14,18 @@ export const postNotificationController = async (
 	next: NextFunction,
 ) => {
 	try {
-		const user = req.user;
+		const { storeId } = req.body;
+		if (!storeId)
+			throw new AppError('알림 송신을 위한 가게ID가 누락되었습니다', 400);
 
-		if (!user) {
-			throw new AppError(
-				'사용자 인증 정보가 없습니다. 잘못된 접근입니다.',
-				401,
-			);
-		}
+		const store = await Store.findOne({ _id: storeId });
 
-		const notifications = await postNotification(user._id);
+		if (store === null) throw new AppError('존재하지 않는 가게입니다', 404);
+
+		const Notification = await postNotification(storeId);
 		res.status(201).json({
 			msg: 'ok',
-			notifications,
+			Notification,
 		});
 	} catch (error) {
 		next(error);
@@ -45,6 +50,43 @@ export const getNotificationController = async (
 			msg: 'ok',
 			notification,
 		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const postAsReadController = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const { notificationId } = req.body;
+		if (!notificationId) {
+			throw new AppError('알림 ID가 누락되었습니다', 400);
+		}
+		await postAsRead(notificationId);
+		res.status(201).json({ msg: '알림이 읽음으로 처리되었습니다' });
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const postAsReadAllController = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const user = req.user;
+		if (!user) {
+			throw new AppError(
+				'사용자 인증 정보가 없습니다. 잘못된 접근입니다.',
+				401,
+			);
+		}
+		await postAsReadAll(user._id);
+		res.status(201).json({ msg: '모든 알림이 읽음으로 처리되었습니다' });
 	} catch (error) {
 		next(error);
 	}
