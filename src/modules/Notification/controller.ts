@@ -15,12 +15,8 @@ export const postNotificationController = async (
 ) => {
 	try {
 		const user = req.user;
-		if (!user?._id)
+		if (!user)
 			throw new AppError('알림 송신을 위한 가게ID가 누락되었습니다', 400);
-
-		const store = await Store.findOne({ ownerId: user?._id });
-
-		if (store === null) throw new AppError('존재하지 않는 가게입니다', 404);
 
 		const Notification = await postNotification(user?._id);
 		res.status(201).json({

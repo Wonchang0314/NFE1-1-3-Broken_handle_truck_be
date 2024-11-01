@@ -4,10 +4,11 @@ import wss from '../webSocketServer';
 import { WebSocketWithUserId } from '../webSocketServer';
 import { Store } from '@/models';
 import Bookmark from '@/models/Bookmark';
+import App from '@/app';
+import { AppError } from '@/utils';
 
-const getBookmarkedUserIds = async (ownerId: string): Promise<string[]> => {
-	const bookmark = await Bookmark.find({ ownerId }).select('userId');
-
+const getBookmarkedUserIds = async (storeId: string): Promise<string[]> => {
+	const bookmark = await Bookmark.find({ storeId }).select('userId');
 	return bookmark.map((bookmark) => String(bookmark.userId));
 };
 
@@ -19,8 +20,9 @@ export const postNotification = async (
 		[{ $set: { isOpen: { $not: '$isOpen' } } }],
 		{ new: true },
 	);
+	if (!store) throw new AppError('해당하는 가게가 없습니다', 404);
 	// 해당 가게를 즐겨찾기한 사용자 ID 목록 조회
-	const bookmarkedUsers = await getBookmarkedUserIds(ownerId);
+	const bookmarkedUsers = await getBookmarkedUserIds(store._id as string);
 
 	let notification;
 	if (store!.isOpen) {
