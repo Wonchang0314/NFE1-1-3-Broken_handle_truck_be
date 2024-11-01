@@ -14,15 +14,11 @@ export const postNotificationController = async (
 	next: NextFunction,
 ) => {
 	try {
-		const { storeId } = req.body;
-		if (!storeId)
+		const user = req.user;
+		if (!user)
 			throw new AppError('알림 송신을 위한 가게ID가 누락되었습니다', 400);
 
-		const store = await Store.findOne({ _id: storeId });
-
-		if (store === null) throw new AppError('존재하지 않는 가게입니다', 404);
-
-		const Notification = await postNotification(storeId);
+		const Notification = await postNotification(user._id);
 		res.status(201).json({
 			msg: 'ok',
 			Notification,

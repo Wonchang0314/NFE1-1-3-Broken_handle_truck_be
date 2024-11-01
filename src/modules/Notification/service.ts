@@ -4,38 +4,38 @@ import wss from '../webSocketServer';
 import { WebSocketWithUserId } from '../webSocketServer';
 import { Store } from '@/models';
 import Bookmark from '@/models/Bookmark';
+import App from '@/app';
+import { AppError } from '@/utils';
 
-const getBookmarkedUserIds = async (
-	storeId: Types.ObjectId,
-): Promise<string[]> => {
+const getBookmarkedUserIds = async (storeId: string): Promise<string[]> => {
 	const bookmark = await Bookmark.find({ storeId }).select('userId');
-
 	return bookmark.map((bookmark) => String(bookmark.userId));
 };
 
 export const postNotification = async (
-	storeId: Types.ObjectId,
+	ownerId: string,
 ): Promise<INotification> => {
 	const store = await Store.findOneAndUpdate(
-		{ _id: storeId },
+		{ _id: ownerId },
 		[{ $set: { isOpen: { $not: '$isOpen' } } }],
 		{ new: true },
 	);
+	if (!store) throw new AppError('해당하는 가게가 없습니다', 404);
 	// 해당 가게를 즐겨찾기한 사용자 ID 목록 조회
-	const bookmarkedUsers = await getBookmarkedUserIds(storeId);
+	const bookmarkedUsers = await getBookmarkedUserIds(store._id as string);
 
 	let notification;
 	if (store!.isOpen) {
 		notification = new Notification({
 			recipients: bookmarkedUsers,
-			sender: storeId,
+			sender: ownerId,
 			type: 'open',
 			content: `${store?.category}가게가 영업을 시작했습니다`,
 		});
 	} else {
 		notification = new Notification({
 			recipients: bookmarkedUsers,
-			sender: storeId,
+			sender: ownerId,
 			type: 'closed',
 			content: `${store?.category}가게가 영업을 마감했습니다`,
 		});
