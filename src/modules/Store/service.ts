@@ -39,7 +39,27 @@ export const getStores = async (
 		queries.name = { $regex: name, $options: 'i' };
 	}
 
-	const stores = await Store.find(queries);
+	const stores = await Store.aggregate([
+		{ $match: queries },
+		{
+			$lookup: {
+				from: 'comments',
+				localField: '_id',
+				foreignField: 'storeId',
+				as: 'comments',
+			},
+		},
+		{
+			$addFields: {
+				commentCount: { $size: '$comments' },
+			},
+		},
+		{
+			$project: {
+				comments: 0,
+			},
+		},
+	]);
 
 	if (!stores)
 		throw new AppError('Store 데이터를 불러오는데 실패했습니다', 500);
@@ -107,6 +127,10 @@ export const deleteStore = async (ownerId: string) => {
 		await Notification.deleteMany({ sender: store.id }).session(session);
 
 		await Store.findByIdAndDelete(store.id).session(session);
+
+		await User.findByIdAndUpdate(ownerId, {
+			$set: { role: 'user' },
+		}).session(session);
 
 		await session.commitTransaction();
 	} catch (e) {

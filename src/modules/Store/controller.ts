@@ -66,7 +66,7 @@ export const postStoreController = async (
 
 		const { store, comments } = await postStore(data);
 
-		res.status(200).json({
+		res.status(201).json({
 			msg: 'ok',
 			store,
 			comments,

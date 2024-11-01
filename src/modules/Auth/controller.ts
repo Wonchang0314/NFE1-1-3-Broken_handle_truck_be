@@ -37,7 +37,7 @@ export const localRegister = async (
 		sendCookie(res, 'accessToken', accessToken, 1);
 
 		// 4. 응답 전송
-		res.status(200).json({
+		res.status(201).json({
 			msg: 'ok',
 			user,
 		});
@@ -185,5 +185,29 @@ export const kakaoCallbackController = async (
 		} else {
 			next(new AppError('카카오 인증 중 오류가 발생했습니다.', 500));
 		}
+	}
+};
+
+// 로그인 확인
+export const AuthValidationController = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const user = req.user;
+
+		if (!user)
+			throw new AppError(
+				'사용자 인증 정보가 없습니다. 잘못된 접근입니다.',
+				401,
+			);
+
+		res.status(200).json({
+			msg: 'ok',
+			user,
+		});
+	} catch (e) {
+		next(e);
 	}
 };
