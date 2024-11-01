@@ -18,7 +18,7 @@ export const postNotificationController = async (
 		if (!user)
 			throw new AppError('알림 송신을 위한 가게ID가 누락되었습니다', 400);
 
-		const Notification = await postNotification(user?._id);
+		const Notification = await postNotification(user._id);
 		res.status(201).json({
 			msg: 'ok',
 			Notification,
