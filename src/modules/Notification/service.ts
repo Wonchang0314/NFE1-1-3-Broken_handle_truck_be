@@ -38,7 +38,7 @@ export const postNotification = async (
 	}
 
 	const savedNotification = await notification.save();
-	const populateNotification = await savedNotification.populate('storeId', [
+	const populateNotification = await savedNotification.populate('sender', [
 		'category',
 		'name',
 	]);
