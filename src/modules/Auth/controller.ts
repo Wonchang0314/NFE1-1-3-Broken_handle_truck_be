@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import {
 	checkEmail,
 	deleteUser,
+	editNickname,
 	kakaoLogin,
 	localLoginUser,
 	localRegisterUser,
@@ -209,5 +210,36 @@ export const AuthValidationController = async (
 		});
 	} catch (e) {
 		next(e);
+	}
+};
+
+// 닉네임 변경
+export const editNicknameContoller = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const user = req.user;
+		const { nickname } = req.body;
+
+		if (!user)
+			throw new AppError(
+				'사용자 인증 정보가 없습니다. 잘못된 접근입니다.',
+				401,
+			);
+
+		const updatedUser = await editNickname(user._id, nickname);
+
+		res.status(201).json({
+			msg: 'ok',
+			user: updatedUser,
+		});
+	} catch (e) {
+		if (e instanceof AppError) {
+			next(e);
+		} else {
+			next(new AppError('닉네임 변경에 실패했습니다.', 500));
+		}
 	}
 };

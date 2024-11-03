@@ -156,3 +156,18 @@ export const kakaoLogin = async (userData: IUserData) => {
 
 	return { accessToken, refreshToken };
 };
+
+// 닉네임 변경 로직
+export const editNickname = async (userId: string, newNickname: string) => {
+	const user = User.findByIdAndUpdate(
+		userId,
+		{
+			nickname: newNickname,
+		},
+		{ new: true, runValidators: true },
+	).select('-password -email');
+
+	if (!user) throw new AppError('사용자를 찾을 수 없습니다.', 404);
+
+	return user;
+};

@@ -3,6 +3,7 @@ import {
 	AuthValidationController,
 	checkEmailController,
 	deleteUserController,
+	editNicknameContoller,
 	kakaoCallbackController,
 	kakaoLoginController,
 	localLogin,
@@ -43,6 +44,10 @@ authRouter.route('/kakao').get(kakaoLoginController);
 
 // @route GET /api/auth/kakao/callback
 authRouter.route('/kakao/callback').get(kakaoCallbackController);
+
+// @route	POST /api/auth/editNickname
+// @desc	닉네임 변경
+authRouter.route('/editNickname').all(authHandler).post(editNicknameContoller);
 
 export default authRouter;
 
@@ -482,4 +487,79 @@ export default authRouter;
  *                 msg:
  *                   type: string
  *                   example: "회원 탈퇴 중 오류가 발생했습니다. 모든 작업이 원복됩니다."
+ */
+
+/**
+ * @swagger
+ * /auth/editNickname:
+ *   post:
+ *     tags: [Auth]
+ *     summary: "닉네임 변경"
+ *     description: "사용자의 닉네임을 변경합니다."
+ *     security:
+ *       - bearerAuth: [] # 인증을 위한 Bearer Token 사용
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nickname:
+ *                 type: string
+ *                 description: "변경할 새로운 닉네임"
+ *                 example: "NewNickname123"
+ *     responses:
+ *       201:
+ *         description: "닉네임 변경 성공"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: "ok"
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "648a04f85fc4a243d8b3e7b9"
+ *                     nickname:
+ *                       type: string
+ *                       example: "NewNickname123"
+ *                     email:
+ *                       type: string
+ *                       example: "user@example.com"
+ *       401:
+ *         description: "인증 실패"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "사용자 인증 정보가 없습니다. 잘못된 접근입니다."
+ *       404:
+ *         description: "사용자를 찾을 수 없음"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "사용자를 찾을 수 없습니다."
+ *       500:
+ *         description: "서버 오류"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "닉네임 변경에 실패했습니다."
  */
