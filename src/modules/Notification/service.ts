@@ -26,21 +26,19 @@ export const postNotification = async (
 	if (store!.isOpen) {
 		notification = new Notification({
 			recipients: bookmarkedUsers,
-			sender: ownerId,
+			sender: store._id,
 			type: 'open',
-			content: `${store?.category}가게가 영업을 시작했습니다`,
 		});
 	} else {
 		notification = new Notification({
 			recipients: bookmarkedUsers,
-			sender: ownerId,
+			sender: store._id,
 			type: 'closed',
-			content: `${store?.category}가게가 영업을 마감했습니다`,
 		});
 	}
 
 	const savedNotification = await notification.save();
-	const populateNotification = await savedNotification.populate('sender', [
+	const populateNotification = await savedNotification.populate('storeId', [
 		'category',
 		'name',
 	]);
