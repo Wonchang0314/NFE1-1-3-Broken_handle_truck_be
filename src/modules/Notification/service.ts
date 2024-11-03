@@ -14,7 +14,7 @@ export const postNotification = async (
 	ownerId: string,
 ): Promise<INotification> => {
 	const store = await Store.findOneAndUpdate(
-		{ _id: ownerId },
+		{ ownerId },
 		[{ $set: { isOpen: { $not: '$isOpen' } } }],
 		{ new: true },
 	);
