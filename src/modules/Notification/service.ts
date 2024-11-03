@@ -1,10 +1,8 @@
-import { Types } from 'mongoose';
 import Notification, { INotification } from '@/models/Notification';
 import wss from '../webSocketServer';
 import { WebSocketWithUserId } from '../webSocketServer';
 import { Store } from '@/models';
 import Bookmark from '@/models/Bookmark';
-import App from '@/app';
 import { AppError } from '@/utils';
 
 const getBookmarkedUserIds = async (storeId: string): Promise<string[]> => {
@@ -42,6 +40,10 @@ export const postNotification = async (
 	}
 
 	const savedNotification = await notification.save();
+	const populateNotification = await savedNotification.populate('sender', [
+		'category',
+		'name',
+	]);
 
 	wss.clients.forEach((client) => {
 		const wsClient = client as WebSocketWithUserId;
@@ -52,7 +54,7 @@ export const postNotification = async (
 			client.send(
 				JSON.stringify({
 					type: 'NEW_NOTIFICATION',
-					data: savedNotification,
+					data: populateNotification,
 				}),
 			);
 		}
@@ -66,7 +68,8 @@ export const getNotification = async (
 ): Promise<INotification[]> => {
 	const notifications = await Notification.find({
 		recipients: userId,
-	});
+		isRead: false,
+	}).populate('sender', ['category', 'name']);
 	return notifications;
 };
 

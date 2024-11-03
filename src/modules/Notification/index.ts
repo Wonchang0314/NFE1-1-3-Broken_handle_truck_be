@@ -15,8 +15,8 @@ notificationRouter
 	.get(getNotificationController)
 	.post(postNotificationController);
 
-notificationRouter.post('/read', postAsReadController);
-notificationRouter.post('/readAll', postAsReadAllController);
+notificationRouter.post('/read', authHandler, postAsReadController);
+notificationRouter.post('/readAll', authHandler, postAsReadAllController);
 
 export default notificationRouter;
 
