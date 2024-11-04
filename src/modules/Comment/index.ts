@@ -3,6 +3,7 @@ import {
 	getCommentController,
 	postCommentController,
 	deleteCommentController,
+	getMyCommentsController,
 } from './controller';
 import { authHandler } from '@/middlewares';
 
@@ -13,6 +14,7 @@ commentRouter
 	.get(getCommentController)
 	.all(authHandler)
 	.post(postCommentController);
+commentRouter.route('/myComments').get(getMyCommentsController);
 commentRouter
 	.route('/:commentId([0-9a-f]{24})')
 	.all(authHandler)
@@ -247,4 +249,88 @@ export default commentRouter;
  *                 msg:
  *                   type: string
  *                   example: "댓글 삭제에 실패했습니다."
+ */
+
+/**
+ * @swagger
+ * /myComments:
+ *   get:
+ *     tags: [Comment]
+ *     summary: "내 댓글 목록 조회"
+ *     description: "사용자가 작성한 댓글 목록을 조회합니다."
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: "성공적으로 댓글 목록을 가져옴"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: "ok"
+ *                 comments:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         description: "댓글 ID"
+ *                         example: "60a4b5f69f1b2c0015d0e4c7"
+ *                       content:
+ *                         type: string
+ *                         description: "댓글 내용"
+ *                         example: "이 가게 정말 좋아요!"
+ *                       storeId:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             description: "가게 ID"
+ *                             example: "60a4b5f69f1b2c0015d0e4d8"
+ *                           name:
+ *                             type: string
+ *                             description: "가게 이름"
+ *                             example: "Store 1"
+ *                           category:
+ *                             type: string
+ *                             description: "가게 카테고리"
+ *                             example: "카페"
+ *                       authorId:
+ *                         type: string
+ *                         description: "작성자 ID"
+ *                         example: "60a4b5f69f1b2c0015d0e4f9"
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: "댓글 작성 날짜"
+ *                         example: "2023-10-24T12:34:56"
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         description: "댓글 수정 날짜"
+ *                         example: "2023-10-24T12:34:56"
+ *       401:
+ *         description: "인증 실패 - 잘못된 접근"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: "사용자 인증 정보가 없습니다. 잘못된 접근입니다."
+ *       500:
+ *         description: "서버 오류"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: "알 수 없는 서버 오류가 발생했습니다."
  */

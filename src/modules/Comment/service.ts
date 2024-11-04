@@ -32,3 +32,12 @@ export const deleteComment = async (commentId: string, authorId: string) => {
 
 	return await Comment.deleteOne({ _id: commentId, authorId });
 };
+
+export const getMyComments = async (userId: string) => {
+	const comments = await Comment.find({ authorId: userId }).populate(
+		'storeId',
+		['name', 'category'],
+	);
+
+	return comments;
+};
