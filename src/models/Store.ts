@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 import mongoose, { Schema, Types } from 'mongoose';
 
 export interface IStore {
@@ -21,11 +21,11 @@ const storeSchema = new Schema({
 	paymentMethod: [{ type: String, enum: ['현금', '카드', '계좌이체'] }],
 	createdAt: {
 		type: String,
-		default: () => moment().format('YYYY-MM-DD HH:mm'),
+		default: () => moment.tz('Asia/Seoul').format('YYYY-MM-DD HH:mm'),
 	},
 	updatedAt: {
 		type: String,
-		default: () => moment().format('YYYY-MM-DD HH:mm'),
+		default: () => moment.tz('Asia/Seoul').format('YYYY-MM-DD HH:mm'),
 	},
 });
 

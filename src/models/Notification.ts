@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 import mongoose, { Document, Schema, Types } from 'mongoose';
 
 export interface INotification extends Document {
@@ -16,11 +16,11 @@ const notificationSchema = new Schema<INotification>({
 	type: { type: String, enum: ['open', 'closed'], required: true },
 	createdAt: {
 		type: String,
-		default: () => moment().format('YYYY-MM-DD HH:mm'),
+		default: () => moment.tz('Asia/Seoul').format('YYYY-MM-DD HH:mm'),
 	},
 	updatedAt: {
 		type: String,
-		default: () => moment().format('YYYY-MM-DD HH:mm'),
+		default: () => moment.tz('Asia/Seoul').format('YYYY-MM-DD HH:mm'),
 	},
 	isRead: {
 		type: Boolean,

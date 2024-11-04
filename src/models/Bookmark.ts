@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { Document, model, Schema, Types } from 'mongoose';
 
 export interface IBookmark extends Document {
@@ -20,7 +20,7 @@ const bookmarkSchema = new Schema({
 	},
 	createdAt: {
 		type: String,
-		default: () => moment().format('YYYY-MM-DD HH:mm'),
+		default: () => moment.tz('Asia/Seoul').format('YYYY-MM-DD HH:mm'),
 	},
 });
 

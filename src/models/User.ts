@@ -1,6 +1,6 @@
 import { AppError } from '@/utils';
 import bcrypt from 'bcrypt';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { Document, model, Schema } from 'mongoose';
 
 export interface IUser extends Document {
@@ -31,7 +31,7 @@ const userSchema = new Schema({
 	},
 	createdAt: {
 		type: String,
-		default: () => moment().format('YYYY-MM-DD HH:mm'),
+		default: () => moment.tz('Asia/Seoul').format('YYYY-MM-DD HH:mm'),
 	},
 	oAuth: {
 		type: String,
