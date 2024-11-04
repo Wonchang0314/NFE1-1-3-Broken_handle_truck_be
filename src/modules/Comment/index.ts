@@ -14,7 +14,10 @@ commentRouter
 	.get(getCommentController)
 	.all(authHandler)
 	.post(postCommentController);
-commentRouter.route('/myComments').get(getMyCommentsController);
+commentRouter
+	.route('/myComments')
+	.all(authHandler)
+	.get(getMyCommentsController);
 commentRouter
 	.route('/:commentId([0-9a-f]{24})')
 	.all(authHandler)

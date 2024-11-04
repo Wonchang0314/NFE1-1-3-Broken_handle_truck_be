@@ -44,7 +44,7 @@ export const postStoreController = async (
 ) => {
 	try {
 		const user = req.user;
-		const { name, coordinates, isOpen, category, paymentMethod } = req.body;
+		const { name, coordinates, category, paymentMethod } = req.body;
 
 		if (!user)
 			throw new AppError(
@@ -59,7 +59,6 @@ export const postStoreController = async (
 			name,
 			ownerId: new Types.ObjectId(user._id),
 			coordinates,
-			isOpen: isOpen ? true : false,
 			category,
 			paymentMethod,
 		};
