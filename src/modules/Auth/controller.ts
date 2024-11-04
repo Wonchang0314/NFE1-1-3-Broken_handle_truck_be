@@ -1,6 +1,7 @@
 import { AppError, clearCookie, sendCookie } from '@/utils';
 import { NextFunction, Request, Response } from 'express';
 import {
+	authValidation,
 	checkEmail,
 	deleteUser,
 	editNickname,
@@ -10,6 +11,7 @@ import {
 } from './service';
 import config from '@/config';
 import { getKakaoToken, getKakaoUser } from '@/utils/kakao';
+import { userInfo } from 'os';
 
 const { KAKAO_REST_API_KEY, KAKAO_REDIRECT_URI, FRONT_BASE_URL } = config;
 
@@ -190,7 +192,7 @@ export const kakaoCallbackController = async (
 };
 
 // 로그인 확인
-export const AuthValidationController = async (
+export const authValidationController = async (
 	req: Request,
 	res: Response,
 	next: NextFunction,
@@ -204,9 +206,11 @@ export const AuthValidationController = async (
 				401,
 			);
 
+		const userInfo = await authValidation(user._id);
+
 		res.status(200).json({
 			msg: 'ok',
-			user,
+			user: userInfo,
 		});
 	} catch (e) {
 		next(e);

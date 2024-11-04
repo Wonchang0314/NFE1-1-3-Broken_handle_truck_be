@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-	AuthValidationController,
+	authValidationController,
 	checkEmailController,
 	deleteUserController,
 	editNicknameContoller,
@@ -16,7 +16,7 @@ const authRouter = Router();
 
 //@route	GET /api/auth/valid
 //@desc	로그인 상태 확인
-authRouter.route('/valid').all(authHandler).get(AuthValidationController);
+authRouter.route('/valid').all(authHandler).get(authValidationController);
 
 // @route	POST /api/auth/register
 // @desc	회원가입

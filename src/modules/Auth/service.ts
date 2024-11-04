@@ -171,3 +171,12 @@ export const editNickname = async (userId: string, newNickname: string) => {
 
 	return user;
 };
+
+// 사용자 로그인 확인
+export const authValidation = async (userId: string) => {
+	const user = await User.findById(userId).select('nickname role');
+
+	if (!user) throw new AppError('사용자를 찾을 수 없습니다.', 404);
+
+	return user;
+};
