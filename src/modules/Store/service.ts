@@ -20,7 +20,7 @@ export const getStores = async (
 	category?: string,
 	name?: string,
 ) => {
-	const radiusInKm = 1;
+	const radiusInKm = 5;
 	const earthRadiusInKm = 6378.1;
 
 	const queries: IQueries = {
