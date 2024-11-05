@@ -42,7 +42,12 @@ export const localRegisterUser = async (
 	return {
 		accessToken,
 		refreshToken,
-		user: { _id: user.id, nickname: user.nickname, role: user.role },
+		user: {
+			_id: user.id,
+			nickname: user.nickname,
+			role: user.role,
+			thumnail: user.thumnail ? user.thumnail : '',
+		},
 	};
 };
 
@@ -76,7 +81,12 @@ export const localLoginUser = async (email: string, password: string) => {
 	return {
 		accessToken,
 		refreshToken,
-		user: { _id: user.id, nickname: user.nickname, role: user.role },
+		user: {
+			_id: user.id,
+			nickname: user.nickname,
+			role: user.role,
+			thumnail: user.thumnail ? user.thumnail : '',
+		},
 	};
 };
 
@@ -139,6 +149,7 @@ export const kakaoLogin = async (userData: IUserData) => {
 			oAuth: 'Kakao',
 			oAuthIdKey: userData.id,
 			nickname: userData.kakao_account.profile.nickname,
+			thumnail: userData.kakao_account.profile.thumbnail_image_url,
 		});
 
 		user = await newUser.save();
@@ -174,7 +185,7 @@ export const editNickname = async (userId: string, newNickname: string) => {
 
 // 사용자 로그인 확인
 export const authValidation = async (userId: string) => {
-	const user = await User.findById(userId).select('nickname role');
+	const user = await User.findById(userId).select('nickname role thumnail');
 
 	if (!user) throw new AppError('사용자를 찾을 수 없습니다.', 404);
 

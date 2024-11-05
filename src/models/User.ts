@@ -11,6 +11,7 @@ export interface IUser extends Document {
 	oAuth?: string;
 	oAuthIdKey?: string;
 	role: 'user' | 'owner';
+	thumnail?: string;
 }
 
 const userSchema = new Schema({
@@ -51,6 +52,10 @@ const userSchema = new Schema({
 		type: String,
 		enum: ['user', 'owner'],
 		default: 'user',
+	},
+	thumnail: {
+		type: String,
+		default: '',
 	},
 });
 
