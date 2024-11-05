@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 export interface IComment extends Document {
 	authorId: Types.ObjectId;
@@ -22,7 +22,7 @@ const commentSchema = new Schema({
 	content: { type: String, required: true },
 	createdAt: {
 		type: String,
-		default: () => moment().format('YYYY-MM-DD HH:mm'),
+		default: () => moment.tz('Asia/Seoul').format('YYYY-MM-DD HH:mm'),
 	},
 });
 

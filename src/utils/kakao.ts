@@ -7,6 +7,7 @@ export interface IUserData {
 	kakao_account: {
 		profile: {
 			nickname: string;
+			thumbnail_image_url: string;
 		};
 	};
 }

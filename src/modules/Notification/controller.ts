@@ -6,7 +6,6 @@ import {
 	postAsReadAll,
 } from './service';
 import { AppError } from '@/utils';
-import { Store } from '@/models';
 
 export const postNotificationController = async (
 	req: Request,
@@ -15,13 +14,18 @@ export const postNotificationController = async (
 ) => {
 	try {
 		const user = req.user;
-		if (!user)
-			throw new AppError('알림 송신을 위한 가게ID가 누락되었습니다', 400);
 
-		const Notification = await postNotification(user._id);
+		if (!user) {
+			throw new AppError(
+				'사용자 인증 정보가 없습니다. 잘못된 접근입니다.',
+				401,
+			);
+		}
+
+		const notification = await postNotification(user._id);
 		res.status(201).json({
 			msg: 'ok',
-			Notification,
+			notification,
 		});
 	} catch (error) {
 		next(error);
@@ -41,10 +45,10 @@ export const getNotificationController = async (
 				401,
 			);
 		}
-		const notification = await getNotification(user._id);
+		const notifications = await getNotification(user._id);
 		res.status(200).json({
 			msg: 'ok',
-			notification,
+			notifications,
 		});
 	} catch (error) {
 		next(error);
@@ -62,7 +66,7 @@ export const postAsReadController = async (
 			throw new AppError('알림 ID가 누락되었습니다', 400);
 		}
 		await postAsRead(notificationId);
-		res.status(201).json({ msg: '알림이 읽음으로 처리되었습니다' });
+		res.status(201).json({ msg: 'ok' });
 	} catch (error) {
 		next(error);
 	}
@@ -82,7 +86,7 @@ export const postAsReadAllController = async (
 			);
 		}
 		await postAsReadAll(user._id);
-		res.status(201).json({ msg: '모든 알림이 읽음으로 처리되었습니다' });
+		res.status(201).json({ msg: 'ok' });
 	} catch (error) {
 		next(error);
 	}

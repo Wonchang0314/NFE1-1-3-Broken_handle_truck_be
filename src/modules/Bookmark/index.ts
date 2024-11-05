@@ -119,6 +119,14 @@ export default bookmarkRouter;
  *                   items:
  *                     type: object
  *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         description: 북마크 ID
+ *                         example: "64b9c63f5f5d2a001d0c8b1b"
+ *                       storeId:
+ *                         type: string
+ *                         description: 스토어 ID
+ *                         example: "64b9c63f5f5d2a001d0c8b1a"
  *                       name:
  *                         type: string
  *                         description: 스토어 이름

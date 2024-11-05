@@ -20,7 +20,7 @@ export const getStores = async (
 	category?: string,
 	name?: string,
 ) => {
-	const radiusInKm = 1;
+	const radiusInKm = 5;
 	const earthRadiusInKm = 6378.1;
 
 	const queries: IQueries = {
@@ -79,7 +79,16 @@ export const postStore = async (data: IStore) => {
 		if (!user)
 			throw new AppError('스토어 등록시 사용자 정보를 찾을 수 없습니다.', 404);
 	} else {
-		store = await Store.findByIdAndUpdate(store._id, { new: true });
+		store = await Store.findByIdAndUpdate(
+			store._id,
+			{
+				name: data.name,
+				coordinates: data.coordinates,
+				category: data.category,
+				paymentMethod: data.paymentMethod,
+			},
+			{ new: true },
+		);
 	}
 
 	if (!store) throw new AppError('스토어 등록에 실패했습니다.', 500);

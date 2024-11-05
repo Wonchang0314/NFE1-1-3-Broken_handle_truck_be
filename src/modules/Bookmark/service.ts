@@ -56,7 +56,8 @@ export const getBookmarkbyUser = async (userId: string) => {
 		},
 		{
 			$project: {
-				_id: 0,
+				_id: 1,
+				storeId: '$storeInfo._id',
 				name: '$storeInfo.name',
 				isOpen: '$storeInfo.isOpen',
 				category: '$storeInfo.category',

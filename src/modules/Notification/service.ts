@@ -1,10 +1,8 @@
-import { Types } from 'mongoose';
 import Notification, { INotification } from '@/models/Notification';
 import wss from '../webSocketServer';
 import { WebSocketWithUserId } from '../webSocketServer';
 import { Store } from '@/models';
 import Bookmark from '@/models/Bookmark';
-import App from '@/app';
 import { AppError } from '@/utils';
 
 const getBookmarkedUserIds = async (storeId: string): Promise<string[]> => {
@@ -16,7 +14,7 @@ export const postNotification = async (
 	ownerId: string,
 ): Promise<INotification> => {
 	const store = await Store.findOneAndUpdate(
-		{ _id: ownerId },
+		{ ownerId },
 		[{ $set: { isOpen: { $not: '$isOpen' } } }],
 		{ new: true },
 	);
@@ -28,20 +26,22 @@ export const postNotification = async (
 	if (store!.isOpen) {
 		notification = new Notification({
 			recipients: bookmarkedUsers,
-			sender: ownerId,
+			sender: store._id,
 			type: 'open',
-			content: `${store?.category}가게가 영업을 시작했습니다`,
 		});
 	} else {
 		notification = new Notification({
 			recipients: bookmarkedUsers,
-			sender: ownerId,
+			sender: store._id,
 			type: 'closed',
-			content: `${store?.category}가게가 영업을 마감했습니다`,
 		});
 	}
 
 	const savedNotification = await notification.save();
+	const populateNotification = await savedNotification.populate('sender', [
+		'category',
+		'name',
+	]);
 
 	wss.clients.forEach((client) => {
 		const wsClient = client as WebSocketWithUserId;
@@ -52,7 +52,7 @@ export const postNotification = async (
 			client.send(
 				JSON.stringify({
 					type: 'NEW_NOTIFICATION',
-					data: savedNotification,
+					data: populateNotification,
 				}),
 			);
 		}
@@ -66,7 +66,8 @@ export const getNotification = async (
 ): Promise<INotification[]> => {
 	const notifications = await Notification.find({
 		recipients: userId,
-	});
+		isRead: false,
+	}).populate('sender', ['category', 'name']);
 	return notifications;
 };
 

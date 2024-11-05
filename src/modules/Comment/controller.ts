@@ -1,5 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import { deleteComment, getComments, postComment } from './service';
+import {
+	deleteComment,
+	getComments,
+	getMyComments,
+	postComment,
+} from './service';
 import { AppError } from '@/utils';
 
 export const getCommentController = async (
@@ -82,5 +87,30 @@ export const deleteCommentController = async (
 		});
 	} catch (error) {
 		next(error);
+	}
+};
+
+export const getMyCommentsController = async (
+	req: Request,
+	res: Response,
+	next: NextFunction,
+) => {
+	try {
+		const user = req.user;
+
+		if (!user)
+			throw new AppError(
+				'사용자 인증 정보가 없습니다. 잘못된 접근입니다.',
+				401,
+			);
+
+		const comments = await getMyComments(user._id);
+
+		res.status(200).json({
+			msg: 'ok',
+			comments,
+		});
+	} catch (e) {
+		next(e);
 	}
 };
