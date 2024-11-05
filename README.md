@@ -2,9 +2,12 @@
 
 - RUNNING_PORT: (기본)8080
 - MONGO_DB_URI: (기본)mongodb://localhost:27017/Broken_handle
-- JWT_ACCESS_SECRET
-- JWT_REFRESH_SECRET
+- JWT_ACCESS_SECRET: 임의로 지정
+- JWT_REFRESH_SECRET: 임의로 지정
 - FRONT_BASE_URL: (기본)http://localhost:5173
+- NODE_ENV: (기본)null (배포시)product
+- KAKAO_REST_API_KEY: 필수
+- KAKAO_REDIRECT_URI: 인증 코드 응답 받을 BE 엔드포인트
 
 # 실행 스크립트
 

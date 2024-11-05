@@ -1,10 +1,15 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import cors from 'cors';
 import config from '@/config';
 import mongoose from 'mongoose';
 import apiRouter from '@/modules';
+import { errorHandler, notFoundHandler } from '@/middlewares';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from '@/swagger/swaggerOption';
+
 const { FRONT_BASE_URL, MONGO_DB_URI } = config;
 
 const App = express();
@@ -16,20 +21,36 @@ App.use(hpp());
 // Cors 설정
 App.use(
 	cors({
-		origin: FRONT_BASE_URL || 'http://localhost:5173',
+		origin: [
+			FRONT_BASE_URL || 'http://localhost:5173',
+			'https://localhost:5173',
+		],
 		credentials: true,
 	}),
 );
 
+App.use(express.urlencoded({ extended: true }));
 App.use(express.json());
+App.use(cookieParser());
 
 // DB 연결
 mongoose
 	.connect(MONGO_DB_URI || 'mongodb://localhost:27017/Broken_handle')
-	.then(() => console.log('DB connected✅'))
+	.then(() => {
+		console.log('DB connected✅');
+	})
 	.catch((e) => console.error(e));
+
+// Swagger UI 경로 설정
+App.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes 연결
 App.use('/api', apiRouter);
+
+// 404 에러 처리 미들웨어
+App.use(notFoundHandler);
+
+// 에러 처리 미들웨어
+App.use(errorHandler);
 
 export default App;
