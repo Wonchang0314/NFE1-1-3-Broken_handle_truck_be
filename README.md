@@ -11,7 +11,7 @@
 - **Backend**: Node.js, Express
 - **Database**: MongoDB (Mongoose 사용)
 - **Authentication**: JWT, OAuth (카카오 로그인 지원)
-- **Real-time Update**: WebSocket (푸드트럭 위치나 시간 변경 알림)
+- **Real-time Update**: WebSocket (푸드트럭 영업 여부에 대한 알림)
 
 ### 📄 API 문서
 API 엔드포인트 및 사용 예시는 아래의 Swagger 링크에서 확인할 수 있습니다:
