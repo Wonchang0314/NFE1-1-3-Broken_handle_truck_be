@@ -176,3 +176,98 @@ export default notificationRouter;
  *                   type: string
  *                   example: "알 수 없는 서버 오류가 발생했습니다."
  */
+
+/**
+ * @swagger
+ * /notification/read:
+ *   post:
+ *     summary: 특정 알림을 읽음 상태로 업데이트
+ *     description: 알림 ID를 받아 해당 알림을 읽음 처리합니다.
+ *     tags: [Notification]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               notificationId:
+ *                 type: string
+ *                 description: 읽음 처리할 알림의 ID
+ *                 example: "635f93d19f1fbc0012e06b8f"
+ *     responses:
+ *       201:
+ *         description: 알림이 읽음 상태로 업데이트됨
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: "ok"
+ *       400:
+ *         description: 잘못된 요청 (알림 ID가 누락됨)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "알림 ID가 누락되었습니다"
+ *       500:
+ *         description: 서버 오류
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "알 수 없는 서버 오류가 발생했습니다."
+ *     security:
+ *       - bearerAuth: []
+ */
+
+/**
+ * @swagger
+ * /notification/readAll:
+ *   post:
+ *     summary: 모든 알림을 읽음 상태로 업데이트
+ *     description: 현재 사용자의 모든 읽지 않은 알림을 읽음 상태로 변경합니다.
+ *     tags: [Notification]
+ *     responses:
+ *       201:
+ *         description: 모든 알림이 읽음 상태로 업데이트됨
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 msg:
+ *                   type: string
+ *                   example: "ok"
+ *       401:
+ *         description: 사용자 인증 정보가 없는 경우
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "사용자 인증 정보가 없습니다. 잘못된 접근입니다."
+ *       500:
+ *         description: 서버 오류
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "알 수 없는 서버 오류가 발생했습니다."
+ *     security:
+ *       - bearerAuth: []
+ */
