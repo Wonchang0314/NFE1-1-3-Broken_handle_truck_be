@@ -20,7 +20,7 @@
 
 API 엔드포인트 및 사용 예시는 아래의 Swagger 링크에서 확인할 수 있습니다:
 
-- [📑 API 문서 보기](https://api.broken-handle-truck/api-docs/)
+- [📑 API 문서 보기](https://api.broken-handle-truck.store/api-docs/)
 
 ### 📚 배운 점
 
