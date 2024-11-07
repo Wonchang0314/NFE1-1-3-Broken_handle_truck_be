@@ -10,7 +10,7 @@ const swaggerOptions: swaggerJsdoc.Options = {
 		},
 		servers: [
 			{
-				url: 'https://port-0-nfe1-1-3-broken-handle-truck-be-m2sh5v6z733a6e47.sel4.cloudtype.app/api',
+				url: 'https://api.broken-handle-truck.store',
 			},
 		],
 		components: {
